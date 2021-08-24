@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "913576419098",
+    "project_id": "ecg-library",
+    "storage_bucket": "ecg-library.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:913576419098:android:f1ef2480f2eefb5f43d6a3",
+        "android_client_info": {
+          "package_name": "com.ecglibrary"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "913576419098-0gpfv3g07loa6d3bnu10pksr0sd4jrgm.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.ecglibrary",
+            "certificate_hash": "d765e876178ace8641a8113dea5db5a0c852ec6d"
+          }
+        },
+        {
+          "client_id": "913576419098-r7idim0je3bgkdordnp105d4l2ukqrn5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBqXw5r889WMn1wuZfGl3WE4BxXMS2vCwY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "913576419098-r7idim0je3bgkdordnp105d4l2ukqrn5.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
