@@ -1,5 +1,5 @@
 name: ecg
-description: ECG Corner
+description: ECG Library
 
 # The following line prevents the package from being accidentally published to
 # pub.dev using `pub publish`. This is preferred for private packages.
@@ -95,17 +95,17 @@ flutter:
   assets:
     - assets/images/square_box.png
     - assets/images/blank_image.png
-    - assets/images/list_bg.png
     - assets/images/landscape.png
     - assets/images/portrait.png
     - assets/images/home_bg.png
+    - assets/images/img_sol.png
     - assets/images/previous_disable.svg
     - assets/images/previous_enable.svg
     - assets/images/next_enable.svg
     - assets/images/next_disable.svg
     - assets/images/back_to_list.svg
     - assets/images/loader_red.gif
-    - assets/images/placeholder.png
+    - assets/placeholder.png
     - assets/env/.env_testing
     - assets/env/.env_dev
     - assets/env/.env_production

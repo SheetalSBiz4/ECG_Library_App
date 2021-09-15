@@ -5,9 +5,8 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_html/flutter_html.dart';
-import 'package:flutter_html/style.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -19,12 +18,13 @@ import 'WebViewScreen.dart';
 class CaseDetails extends StatefulWidget {
   List<CaseModel> caseModels;
   int index;
+  int pageCount;
 
-  CaseDetails(this.index, this.caseModels);
+  CaseDetails(this.index, this.caseModels, this.pageCount);
 
   @override
   _CaseDetailsState createState() {
-    return _CaseDetailsState(this.index, this.caseModels);
+    return _CaseDetailsState(this.index, this.caseModels, this.pageCount);
   }
 }
 
@@ -33,6 +33,7 @@ class _CaseDetailsState extends State<CaseDetails> {
   bool previousEnable = false;
   bool nextEnable = false;
   bool isPortrait = false;
+  int pageCount;
 
   var _isVisible = false;
   var _isProgressVisible = false;
@@ -45,14 +46,17 @@ class _CaseDetailsState extends State<CaseDetails> {
 
   bool disabeScroll = false;
 
-  _CaseDetailsState(this.index, this.caseModels);
+  _CaseDetailsState(this.index, this.caseModels, this.pageCount);
 
   @override
   Future<void> initState() {
     super.initState();
     controller = PhotoViewController();
+    // print("caseModels >>>>>>>>>>>${caseModels.length}");
+    // print("pageCount >>>>>>>>>>>${pageCount}");
     rotateToLandscape();
     getImagesFromFB();
+    getAnswerImageFromFB();
   }
 
   @override
@@ -69,7 +73,11 @@ class _CaseDetailsState extends State<CaseDetails> {
   }
 
   void openURL(url) {
-    if (canLaunch(url) != null) launch(url);
+    if (url.startsWith('http') || url.startsWith('https')) {
+      if (canLaunch(url) != null) launch(url);
+    } else {
+      Fluttertoast.showToast(msg: "Unable to open due to invalid url");
+    }
     // openWebViewScreen(url);
   }
 
@@ -116,6 +124,35 @@ class _CaseDetailsState extends State<CaseDetails> {
     });
   }
 
+  getAnswerImageFromFB() async {
+    controller.dispose();
+    controller = PhotoViewController();
+    setState(() {
+      nextEnable = (index + 1) < caseModels?.length ? true : false;
+      previousEnable = index > 0 ? true : false;
+      caseModel = caseModels[index];
+    });
+    await saveReadStatus(caseModel.id);
+    List<CaseImageModel> imageUrls = [];
+    caseModel?.rationaleAttachments?.forEach((imageName) async {
+      // print('Image NAme---${imageName}');
+      final ref = FirebaseStorage.instance
+          .ref()
+          .child(FB_ENV)
+          .child(ENV)
+          .child(FB_RATIONALE_ATTACHMENT)
+          .child(imageName);
+      var url = await ref.getDownloadURL();
+      // print(url);
+      CaseImageModel image = new CaseImageModel(url);
+      imageUrls.add(image);
+      // print('answerImages---->${imageUrls}');
+      setState(() {
+        caseModel.answerImages = imageUrls;
+      });
+    });
+  }
+
   void changeOrientation(bool val) {
     if (isPortrait) {
       rotateToLandscape();
@@ -129,16 +166,39 @@ class _CaseDetailsState extends State<CaseDetails> {
 
   @override
   Widget build(BuildContext context) {
-    // print('disabeScroll---${disabeScroll}');
     Size size = MediaQuery.of(context).size;
     var bottomBarHeight = MediaQuery.of(context).padding.bottom;
-    // print('bottomBarHeight---->${bottomBarHeight}');
-    print('size------>${size.width}-------${size.height}');
-    print('ratio------>${caseModel.iHeight / caseModel.iWidth}-------');
-    print(
-        'Image height------>${size.width * (caseModel.iHeight / caseModel.iWidth)}-------');
+    bool isSupplementShow = true;
+    bool isAnswerImageShow = true;
+    // print('size------>${size.width}-------${size.height}');
+    // print('ratio------>${caseModel.iHeight / caseModel.iWidth}-------');
+    // print(
+    //     'Image height------>${size.width * (caseModel.iHeight / caseModel.iWidth)}-------');
     String reference = caseModel?.references?.replaceAll("<p>", "");
-    // print('teststt ${reference}');
+    String supplement = caseModel?.supplement?.replaceAll("<p>", "");
+
+    if (supplement.isEmpty) {
+      isSupplementShow = false;
+    }
+
+    if(caseModel.rationaleAttachments.isEmpty){
+      isAnswerImageShow = false;
+    }
+
+    var selectedCount;
+    if (pageCount > 1) {
+      selectedCount = '${pageCount * 10 + index + 1}';
+    } else {
+      selectedCount = '${index + 1}';
+    }
+
+    var totalCount;
+    if (pageCount > 1) {
+      totalCount = '${pageCount * 10 + caseModels?.length}';
+    } else {
+      totalCount = '${caseModels?.length}';
+    }
+
     return Scaffold(
       appBar: AppBar(
           toolbarHeight: 40,
@@ -156,9 +216,9 @@ class _CaseDetailsState extends State<CaseDetails> {
               onChanged: changeOrientation,
               value: !isPortrait,
               activeColor: HexColor(color_ffffff),
-              activeTrackColor: HexColor(color_dc3f4dff),
+              activeTrackColor: HexColor(color_676767),
               inactiveThumbColor: HexColor(color_ffffff),
-              inactiveTrackColor: HexColor(color_dc3f4dff),
+              inactiveTrackColor: HexColor(color_676767),
             ),
             (isPortrait
                 ? IconButton(
@@ -171,7 +231,7 @@ class _CaseDetailsState extends State<CaseDetails> {
                   )),
           ]),
       body: Container(
-        color: HexColor(color_ffffff),
+        color: HexColor(color_theme),
         child: SafeArea(
           left: false,
           right: false,
@@ -182,7 +242,7 @@ class _CaseDetailsState extends State<CaseDetails> {
                 image: DecorationImage(
                     image: AssetImage("assets/images/home_bg.png"),
                     fit: BoxFit.cover),
-                color: HexColor(color_ffffff)),
+                color: HexColor(color_theme)),
             child: Container(
               child: Column(
                 children: <Widget>[
@@ -210,52 +270,53 @@ class _CaseDetailsState extends State<CaseDetails> {
                                     textScaleFactor: 1,
                                     style: TextStyle(
                                         fontSize: 14,
-                                        color: HexColor(color_333333),
+                                        color: HexColor(color_ffffff),
                                         fontFamily: "Montserrat",
                                         fontWeight: FontWeight.w400),
                                   ),
                                 ),
                                 Container(
                                   margin: EdgeInsets.only(top: 17),
-                                  color: Colors.white,
+                                  color: HexColor(color_theme),
                                   width: size.width,
                                   height: size.width *
                                       (caseModel.iHeight / caseModel.iWidth),
                                   child: InkWell(
+                                    // child: Container(
+                                    //   child: FadeInImage.assetNetwork(
+                                    //     placeholder: '',
+                                    //     // ignore: null_aware_in_condition
+                                    //     image: caseModel
+                                    //         ?.attachemtnImages?.isNotEmpty
+                                    //         ? caseModel?.attachemtnImages[0]
+                                    //         ?.serverPath
+                                    //         : '',
+                                    //     fit: BoxFit.fill,
+                                    //   ),
+                                    // ),
                                     child: Container(
-                                      // decoration: BoxDecoration(
-                                      //   color: Colors.white,
-                                      //   image: DecorationImage(
-                                      //     image: NetworkImage(caseModel
-                                      //             ?.attachemtnImages?.isNotEmpty
-                                      //         ? caseModel?.attachemtnImages[0]
-                                      //             ?.serverPath
-                                      //         : ''),
-                                      //     fit: BoxFit.fill,
-                                      //   ),
-                                      //   // border: Border.all(
-                                      //   //   color: Colors.white,
-                                      //   //   width: 1.0,
-                                      //   // ),
-                                      //   // borderRadius: BorderRadius.circular(5.0),
-                                      // ),
-
-                                      child: FadeInImage.assetNetwork(
-                                        placeholder: 'placeholder.png',
-                                        image: caseModel
-                                                ?.attachemtnImages?.isNotEmpty
-                                            ? caseModel?.attachemtnImages[0]
-                                                ?.serverPath
-                                            : '',
-                                        fit: BoxFit.fill,
+                                      decoration: BoxDecoration(
+                                        color: Colors.white30,
+                                        image: DecorationImage(
+                                          // ignore: null_aware_in_condition
+                                          image: NetworkImage(caseModel
+                                                  ?.attachemtnImages?.isNotEmpty
+                                              ? caseModel?.attachemtnImages[0]
+                                                  ?.serverPath
+                                              : ''),
+                                          fit: BoxFit.fill,
+                                        ),
                                       ),
                                     ),
                                     onTap: () async {
-                                      await showDialog(
-                                          context: context,
-                                          barrierDismissible: true,
-                                          builder: (_) =>
-                                              ImageDialog(caseModel));
+                                      Fluttertoast.showToast(
+                                          msg: "  Coming soon...  ");
+                                      // await showDialog(
+                                      //     context: context,
+                                      //     barrierDismissible: true,
+                                      //     builder: (_) =>
+                                      //         ImageDialog(caseModel)
+                                      // );
                                     },
                                   ),
                                   // childSize: Size(size.width, size.height * 0.6),
@@ -268,7 +329,7 @@ class _CaseDetailsState extends State<CaseDetails> {
                                           borderRadius:
                                               BorderRadius.circular(7.0),
                                           side: BorderSide(
-                                              color: HexColor(color_dc3f4dff))),
+                                              color: HexColor(color_ffffff))),
                                       onPressed: () {
                                         setState(() {
                                           showAnswer = true;
@@ -278,7 +339,7 @@ class _CaseDetailsState extends State<CaseDetails> {
                                           textScaleFactor: 1,
                                           style: TextStyle(
                                               fontSize: 14,
-                                              color: HexColor(color_dc3f4dff),
+                                              color: HexColor(color_ffffff),
                                               fontFamily: "Montserrat",
                                               fontWeight: FontWeight.w500)),
                                     ),
@@ -296,111 +357,136 @@ class _CaseDetailsState extends State<CaseDetails> {
                                         Container(
                                           margin: EdgeInsets.only(
                                               bottom: 8, top: 20),
-                                          child: Text('Diagnosis:',
+                                          child: Text('DIAGNOSIS:',
                                               textScaleFactor: 1,
                                               style: TextStyle(
                                                   fontSize: 14,
-                                                  color:
-                                                      HexColor(color_dc3f4dff),
+                                                  color: HexColor(color_ffffff),
                                                   fontFamily: "Montserrat",
-                                                  fontWeight: FontWeight.w400)),
+                                                  fontWeight: FontWeight.w700)),
                                         ),
                                         Text(caseModel?.result,
                                             textScaleFactor: 1,
                                             style: TextStyle(
                                                 fontSize: 14,
-                                                color: HexColor(color_333333),
+                                                color: HexColor(color_ffffff),
                                                 fontFamily: "Montserrat",
                                                 fontWeight: FontWeight.w400)),
                                         Container(
                                           margin: EdgeInsets.only(
-                                              top: 8, bottom: 8),
-                                          child: Text('Rationale:',
+                                              top: 15, bottom: 8),
+                                          child: Text('RATIONALE:',
                                               textScaleFactor: 1,
                                               style: TextStyle(
                                                   fontSize: 14,
-                                                  color:
-                                                      HexColor(color_dc3f4dff),
+                                                  color: HexColor(color_ffffff),
                                                   fontFamily: "Montserrat",
-                                                  fontWeight: FontWeight.w400)),
+                                                  fontWeight: FontWeight.w700)),
                                         ),
                                         Text(caseModel?.nextStep,
                                             textScaleFactor: 1,
                                             style: TextStyle(
                                                 fontSize: 14,
-                                                color: HexColor(color_333333),
+                                                color: HexColor(color_ffffff),
                                                 fontFamily: "Montserrat",
                                                 fontWeight: FontWeight.w400)),
-                                        if (!showReference)
-                                          Container(
-                                            margin: EdgeInsets.only(top: 0),
-                                            child: FlatButton(
-                                              shape: RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          7.0),
-                                                  side: BorderSide(
-                                                      color: HexColor(
-                                                          color_dc3f4dff))),
-                                              onPressed: () {
-                                                setState(() {
-                                                  showReference = true;
-                                                });
+                                        Visibility(
+                                          visible: isAnswerImageShow,
+                                          child: Container(
+                                            margin: EdgeInsets.only(
+                                                top: 15, bottom: 8),
+                                            child: InkWell(
+                                              onTap: () {
+                                                Fluttertoast.showToast(
+                                                    msg: "  Coming soon...  ");
+
+                                                //  showDialog(
+                                                //     context: context,
+                                                //     barrierDismissible: true,
+                                                //     builder: (_) =>
+                                                //         ImageDialog(caseModel)
+                                                // );
                                               },
-                                              minWidth: 0,
-                                              height: 0,
-                                              padding: EdgeInsets.all(5),
-                                              child: Text('References',
-                                                  textScaleFactor: 1,
-                                                  style: TextStyle(
-                                                      fontSize: 10,
-                                                      color: HexColor(
-                                                          color_dc3f4dff),
-                                                      fontFamily: "Montserrat",
-                                                      fontWeight:
-                                                          FontWeight.w500)),
+                                              child: Image.asset(
+                                                  'assets/images/img_sol.png',
+                                                  width: 50.0,
+                                                  height: 50.0),
                                             ),
                                           ),
-                                        if (showReference)
-                                          Column(
-                                            mainAxisSize: MainAxisSize.min,
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.start,
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Container(
-                                                margin: EdgeInsets.only(top: 9),
-                                                child: Text('References:',
-                                                    textScaleFactor: 1,
-                                                    style: TextStyle(
-                                                        fontSize: 12,
-                                                        color: HexColor(
-                                                            color_dc3f4dff),
-                                                        fontFamily:
-                                                            "Montserrat",
-                                                        fontWeight:
-                                                            FontWeight.w400)),
-                                              ),
-                                              Html(
-                                                  style: {
-                                                    "body": Style(
-                                                      padding: EdgeInsets.only(
-                                                          top: 0, left: 0),
-                                                      margin: EdgeInsets.only(
-                                                          top: 8, left: 0),
-                                                      fontSize: FontSize(13.0),
+                                        ),
+                                        Column(
+                                          mainAxisSize: MainAxisSize.min,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Container(
+                                              margin: EdgeInsets.only(
+                                                  top: 8, bottom: 8),
+                                              child: Text('REFERENCES:',
+                                                  textScaleFactor: 1,
+                                                  style: TextStyle(
+                                                      fontSize: 14,
+                                                      color: HexColor(
+                                                          color_ffffff),
                                                       fontFamily: "Montserrat",
                                                       fontWeight:
-                                                          FontWeight.w400,
-                                                    ),
+                                                          FontWeight.w700)),
+                                            ),
+                                            GestureDetector(
+                                              onTap: () {
+                                                openURL(reference);
+                                              },
+                                              child: new Text(reference,
+                                                  style: TextStyle(
+                                                    fontSize: 13,
+                                                    fontFamily: "Montserrat",
+                                                    color: Colors.blue,
+                                                    fontWeight: FontWeight.w400,
+                                                  )),
+                                            ),
+                                          ],
+                                        ),
+                                        Visibility(
+                                            visible: isSupplementShow,
+                                            child: Column(
+                                              mainAxisSize: MainAxisSize.min,
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.start,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Container(
+                                                  margin: EdgeInsets.only(
+                                                      top: 15, bottom: 8),
+                                                  child: Text('SUPPLEMENT:',
+                                                      textScaleFactor: 1,
+                                                      style: TextStyle(
+                                                          fontSize: 14,
+                                                          color: HexColor(
+                                                              color_ffffff),
+                                                          fontFamily:
+                                                              "Montserrat",
+                                                          fontWeight:
+                                                              FontWeight.w700)),
+                                                ),
+                                                GestureDetector(
+                                                  onTap: () {
+                                                    openURL(supplement);
                                                   },
-                                                  data: reference,
-                                                  onLinkTap: (String url) {
-                                                    openURL(url);
-                                                  }),
-                                            ],
-                                          )
+                                                  child: new Text(supplement,
+                                                      style: TextStyle(
+                                                        fontSize: 13,
+                                                        fontFamily:
+                                                            "Montserrat",
+                                                        color: Colors.blue,
+                                                        fontWeight:
+                                                            FontWeight.w400,
+                                                      )),
+                                                ),
+                                              ],
+                                            )),
                                       ],
                                     ),
                                   ),
@@ -410,7 +496,8 @@ class _CaseDetailsState extends State<CaseDetails> {
                         ),
                       ),
                       // childSize: Size(size.width, size.height * 0.6),
-                      backgroundDecoration: BoxDecoration(color: Colors.white),
+                      backgroundDecoration:
+                          BoxDecoration(color: HexColor(color_theme)),
                       // customSize: MediaQuery.of(context).size,
                       enableRotation: false,
                       scaleStateChangedCallback: onScaleStateChangedCallback,
@@ -427,8 +514,8 @@ class _CaseDetailsState extends State<CaseDetails> {
                       decoration: BoxDecoration(
                         border: Border(
                             top: BorderSide(
-                                width: 1.7, color: HexColor(color_e6e6e6ff))),
-                        color: HexColor(color_ffffff),
+                                width: 1.7, color: HexColor('#ff1d1e20'))),
+                        color: HexColor(color_0d0e0f),
                       ),
                       child: Stack(
                         children: [
@@ -457,20 +544,22 @@ class _CaseDetailsState extends State<CaseDetails> {
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
                                   Text(
-                                    '${index + 1}',
+                                    // '${pageCount * 10 + index + 1}',
+                                    selectedCount,
                                     textScaleFactor: 1,
                                     style: TextStyle(
                                         fontSize: 14,
-                                        color: primaryColor,
+                                        color: Colors.white,
                                         fontFamily: "Montserrat",
                                         fontWeight: FontWeight.w500),
                                   ),
                                   Text(
-                                    ' of ${caseModels?.length}',
+                                    // ' of ${pageCount * 10 + caseModels?.length}',
+                                    ' of $totalCount',
                                     textScaleFactor: 1,
                                     style: TextStyle(
                                         fontSize: 14,
-                                        color: HexColor(color_afafafff),
+                                        color: HexColor(color_444444),
                                         fontFamily: "Montserrat",
                                         fontWeight: FontWeight.w500),
                                   ),
@@ -538,6 +627,7 @@ class _CaseDetailsState extends State<CaseDetails> {
       showAnswer = false;
       showReference = false;
       getImagesFromFB();
+      getAnswerImageFromFB();
     });
   }
 
@@ -548,6 +638,7 @@ class _CaseDetailsState extends State<CaseDetails> {
       showAnswer = false;
       showReference = false;
       getImagesFromFB();
+      getAnswerImageFromFB();
     });
   }
 
@@ -590,6 +681,7 @@ class ImageDialog extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: Colors.white,
                   image: DecorationImage(
+                    // ignore: null_aware_in_condition
                     image: NetworkImage(caseModel?.attachemtnImages?.isNotEmpty
                         ? caseModel?.attachemtnImages[0]?.serverPath
                         : ''),
@@ -608,7 +700,7 @@ class ImageDialog extends StatelessWidget {
               // basePosition: Alignment.center,
             ),
             ResizebleWidget(
-              child:Image.asset("assets/images/blank_image.png"),
+              child: Image.asset("assets/images/blank_image.png"),
               // child: Text(
               //   '''
               //
