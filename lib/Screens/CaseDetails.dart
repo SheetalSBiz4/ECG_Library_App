@@ -397,15 +397,12 @@ class _CaseDetailsState extends State<CaseDetails> {
                                                 top: 15, bottom: 8),
                                             child: InkWell(
                                               onTap: () {
-                                                Fluttertoast.showToast(
-                                                    msg: "  Coming soon...  ");
-
-                                                //  showDialog(
-                                                //     context: context,
-                                                //     barrierDismissible: true,
-                                                //     builder: (_) =>
-                                                //         ImageDialog(caseModel)
-                                                // );
+                                                 showDialog(
+                                                    context: context,
+                                                    barrierDismissible: true,
+                                                    builder: (_) =>
+                                                        AnswerImageDialog(caseModel)
+                                                );
                                               },
                                               child: Image.asset(
                                                   'assets/images/img_sol.png',
@@ -655,6 +652,55 @@ class _CaseDetailsState extends State<CaseDetails> {
     }
   }
 }
+
+// ignore: must_be_immutable
+class AnswerImageDialog extends StatelessWidget {
+  int index;
+  String url;
+  CaseModel caseModel;
+
+  AnswerImageDialog(this.caseModel);
+
+  @override
+  Widget build(BuildContext context) {
+    Size size = MediaQuery.of(context).size;
+    return Dialog(
+      child: Container(
+        width: size.width,
+        height: size.width * (caseModel.iHeight / caseModel.iWidth),
+        child: Stack(
+          children: [
+            PhotoView.customChild(
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  image: DecorationImage(
+                    // ignore: null_aware_in_condition
+                    image: NetworkImage(caseModel?.rationaleAttachments?.isNotEmpty
+                        ? caseModel?.answerImages[0]?.serverPath
+                        : ''),
+                    fit: BoxFit.fill,
+                  ),
+                ),
+              ),
+              // childSize: Size(size.width, size.height * 0.6),
+              backgroundDecoration: BoxDecoration(color: Colors.white),
+              // customSize: MediaQuery.of(context).size,
+              enableRotation: false,
+
+              minScale: PhotoViewComputedScale.contained,
+              maxScale: PhotoViewComputedScale.covered * 3,
+              initialScale: PhotoViewComputedScale.contained,
+              // basePosition: Alignment.center,
+            ),
+
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 
 class ImageDialog extends StatelessWidget {
   int index;
