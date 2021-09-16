@@ -35,7 +35,6 @@ class _CaseDetailsState extends State<CaseDetails> {
   bool isPortrait = false;
   int pageCount;
 
-  var _isVisible = false;
   var _isProgressVisible = false;
   CaseModel caseModel;
 
@@ -45,6 +44,8 @@ class _CaseDetailsState extends State<CaseDetails> {
   PhotoViewController controller;
 
   bool disabeScroll = false;
+
+  bool _isShowProgress = true;
 
   _CaseDetailsState(this.index, this.caseModels, this.pageCount);
 
@@ -119,6 +120,7 @@ class _CaseDetailsState extends State<CaseDetails> {
       imageUrls.add(image);
       // print('imageUrls---->${imageUrls}');
       setState(() {
+        _isShowProgress = false;
         caseModel.attachemtnImages = imageUrls;
       });
     });
@@ -295,7 +297,20 @@ class _CaseDetailsState extends State<CaseDetails> {
                                     //     fit: BoxFit.fill,
                                     //   ),
                                     // ),
+
                                     child: Container(
+                                      child: Visibility(
+                                          visible: _isShowProgress,
+                                          child: Center(
+                                              child: SizedBox(
+                                                  width: size.width,
+                                                  height: size.width *
+                                                      (caseModel.iHeight /
+                                                          caseModel.iWidth),
+                                                  child: Image.asset(
+                                                    'assets/placeholder.png',
+                                                    fit: BoxFit.fill,
+                                                  )))),
                                       decoration: BoxDecoration(
                                         color: Colors.white30,
                                         image: DecorationImage(
@@ -398,12 +413,12 @@ class _CaseDetailsState extends State<CaseDetails> {
                                                 top: 15, bottom: 8),
                                             child: InkWell(
                                               onTap: () {
-                                                 showDialog(
+                                                showDialog(
                                                     context: context,
                                                     barrierDismissible: true,
                                                     builder: (_) =>
-                                                        AnswerImageDialog(caseModel)
-                                                );
+                                                        AnswerImageDialog(
+                                                            caseModel));
                                               },
                                               child: Image.asset(
                                                   'assets/images/img_sol.png',
@@ -674,12 +689,14 @@ class AnswerImageDialog extends StatelessWidget {
             PhotoView.customChild(
               child: Container(
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: Colors.white30,
                   image: DecorationImage(
                     // ignore: null_aware_in_condition
-                    image: NetworkImage(caseModel?.rationaleAttachments?.isNotEmpty
-                        ? caseModel?.answerImages[0]?.serverPath
-                        : ''),
+                    image: NetworkImage(
+                        // ignore: null_aware_in_condition
+                        caseModel?.rationaleAttachments?.isNotEmpty
+                            ? caseModel?.answerImages[0]?.serverPath
+                            : ''),
                     fit: BoxFit.fill,
                   ),
                 ),
@@ -694,14 +711,12 @@ class AnswerImageDialog extends StatelessWidget {
               initialScale: PhotoViewComputedScale.contained,
               // basePosition: Alignment.center,
             ),
-
           ],
         ),
       ),
     );
   }
 }
-
 
 class ImageDialog extends StatelessWidget {
   int index;
