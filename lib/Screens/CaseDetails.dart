@@ -326,7 +326,7 @@ class _CaseDetailsState extends State<CaseDetails> {
                                     ),
                                     onTap: () async {
                                       Fluttertoast.showToast(
-                                          msg: "  Coming soon...  ");
+                                          msg: " Caliper screen coming soon...  ");
                                       // await showDialog(
                                       //     context: context,
                                       //     barrierDismissible: true,
