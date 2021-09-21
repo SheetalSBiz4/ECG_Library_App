@@ -5,6 +5,8 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_html/flutter_html.dart';
+import 'package:flutter_html/style.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:hexcolor/hexcolor.dart';
@@ -13,6 +15,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../Models/CaseModel.dart';
 import '../constants.dart';
+import 'CaliperScreen.dart';
 import 'WebViewScreen.dart';
 
 class CaseDetails extends StatefulWidget {
@@ -74,11 +77,7 @@ class _CaseDetailsState extends State<CaseDetails> {
   }
 
   void openURL(url) {
-    if (url.startsWith('http') || url.startsWith('https')) {
-      if (canLaunch(url) != null) launch(url);
-    } else {
-      Fluttertoast.showToast(msg: "Unable to open due to invalid url");
-    }
+    if (canLaunch(url) != null) launch(url);
     // openWebViewScreen(url);
   }
 
@@ -172,6 +171,7 @@ class _CaseDetailsState extends State<CaseDetails> {
     var bottomBarHeight = MediaQuery.of(context).padding.bottom;
     bool isSupplementShow = true;
     bool isAnswerImageShow = true;
+    bool isReferenceShow = true;
     // print('size------>${size.width}-------${size.height}');
     // print('ratio------>${caseModel.iHeight / caseModel.iWidth}-------');
     // print(
@@ -179,8 +179,15 @@ class _CaseDetailsState extends State<CaseDetails> {
     String reference = caseModel?.references?.replaceAll("<p>", "");
     String supplement = caseModel?.supplement?.replaceAll("<p>", "");
 
-    if (supplement.isEmpty) {
+    print(reference);
+    print(supplement);
+
+    if (supplement.isEmpty || !supplement.startsWith('<a href="http') || !supplement.startsWith('<a href="https')) {
       isSupplementShow = false;
+    }
+
+    if (reference.isEmpty || !reference.startsWith('<a href="http') || !reference.startsWith('<a href="https')) {
+      isReferenceShow = false;
     }
 
     if (caseModel.rationaleAttachments.isEmpty ||
@@ -285,19 +292,6 @@ class _CaseDetailsState extends State<CaseDetails> {
                                   height: size.width *
                                       (caseModel.iHeight / caseModel.iWidth),
                                   child: InkWell(
-                                    // child: Container(
-                                    //   child: FadeInImage.assetNetwork(
-                                    //     placeholder: '',
-                                    //     // ignore: null_aware_in_condition
-                                    //     image: caseModel
-                                    //         ?.attachemtnImages?.isNotEmpty
-                                    //         ? caseModel?.attachemtnImages[0]
-                                    //         ?.serverPath
-                                    //         : '',
-                                    //     fit: BoxFit.fill,
-                                    //   ),
-                                    // ),
-
                                     child: Container(
                                       child: Visibility(
                                           visible: _isShowProgress,
@@ -325,14 +319,13 @@ class _CaseDetailsState extends State<CaseDetails> {
                                       ),
                                     ),
                                     onTap: () async {
-                                      Fluttertoast.showToast(
-                                          msg: " Caliper screen coming soon...  ");
-                                      // await showDialog(
-                                      //     context: context,
-                                      //     barrierDismissible: true,
-                                      //     builder: (_) =>
-                                      //         ImageDialog(caseModel)
-                                      // );
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) => CaliperScreen(
+                                                caseModel?.attachemtnImages[0]
+                                                    ?.serverPath)),
+                                      );
                                     },
                                   ),
                                   // childSize: Size(size.width, size.height * 0.6),
@@ -377,7 +370,7 @@ class _CaseDetailsState extends State<CaseDetails> {
                                               textScaleFactor: 1,
                                               style: TextStyle(
                                                   fontSize: 14,
-                                                  color: HexColor(color_ffffff),
+                                                  color: HexColor(color_ffea00),
                                                   fontFamily: "Montserrat",
                                                   fontWeight: FontWeight.w700)),
                                         ),
@@ -395,7 +388,7 @@ class _CaseDetailsState extends State<CaseDetails> {
                                               textScaleFactor: 1,
                                               style: TextStyle(
                                                   fontSize: 14,
-                                                  color: HexColor(color_ffffff),
+                                                  color: HexColor(color_ffea00),
                                                   fontFamily: "Montserrat",
                                                   fontWeight: FontWeight.w700)),
                                         ),
@@ -422,44 +415,66 @@ class _CaseDetailsState extends State<CaseDetails> {
                                               },
                                               child: Image.asset(
                                                   'assets/images/img_sol.png',
-                                                  width: 50.0,
-                                                  height: 50.0),
+                                                  width: 40.0,
+                                                  height: 40.0),
                                             ),
                                           ),
                                         ),
-                                        Column(
-                                          mainAxisSize: MainAxisSize.min,
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.start,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Container(
-                                              margin: EdgeInsets.only(
-                                                  top: 8, bottom: 8),
-                                              child: Text('REFERENCES:',
-                                                  textScaleFactor: 1,
-                                                  style: TextStyle(
-                                                      fontSize: 14,
-                                                      color: HexColor(
-                                                          color_ffffff),
+                                        Visibility(
+                                          visible: isReferenceShow,
+                                          child: Column(
+                                            mainAxisSize: MainAxisSize.min,
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.start,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Container(
+                                                margin: EdgeInsets.only(
+                                                    top: 8, bottom: 8),
+                                                child: Text('REFERENCES:',
+                                                    textScaleFactor: 1,
+                                                    style: TextStyle(
+                                                        fontSize: 14,
+                                                        color: HexColor(
+                                                            color_ffea00),
+                                                        fontFamily:
+                                                            "Montserrat",
+                                                        fontWeight:
+                                                            FontWeight.w700)),
+                                              ),
+                                              // GestureDetector(
+                                              //   onTap: () {
+                                              //     openURL(reference);
+                                              //   },
+                                              //   child: new Text(reference,
+                                              //       style: TextStyle(
+                                              //         fontSize: 13,
+                                              //         fontFamily: "Montserrat",
+                                              //         color: Colors.blue,
+                                              //         fontWeight:
+                                              //             FontWeight.w400,
+                                              //       )),
+                                              // ),
+                                              Html(
+                                                  style: {
+                                                    "body": Style(
+                                                      padding: EdgeInsets.only(
+                                                          top: 0, left: 0),
+                                                      margin: EdgeInsets.only(
+                                                          top: 8, left: 0),
+                                                      fontSize: FontSize(13.0),
                                                       fontFamily: "Montserrat",
                                                       fontWeight:
-                                                          FontWeight.w700)),
-                                            ),
-                                            GestureDetector(
-                                              onTap: () {
-                                                openURL(reference);
-                                              },
-                                              child: new Text(reference,
-                                                  style: TextStyle(
-                                                    fontSize: 13,
-                                                    fontFamily: "Montserrat",
-                                                    color: Colors.blue,
-                                                    fontWeight: FontWeight.w400,
-                                                  )),
-                                            ),
-                                          ],
+                                                      FontWeight.w400,
+                                                    ),
+                                                  },
+                                                  data: reference,
+                                                  onLinkTap: (String url) {
+                                                    openURL(url);
+                                                  }),
+                                            ],
+                                          ),
                                         ),
                                         Visibility(
                                             visible: isSupplementShow,
@@ -478,26 +493,43 @@ class _CaseDetailsState extends State<CaseDetails> {
                                                       style: TextStyle(
                                                           fontSize: 14,
                                                           color: HexColor(
-                                                              color_ffffff),
+                                                              color_ffea00),
                                                           fontFamily:
                                                               "Montserrat",
                                                           fontWeight:
                                                               FontWeight.w700)),
                                                 ),
-                                                GestureDetector(
-                                                  onTap: () {
-                                                    openURL(supplement);
-                                                  },
-                                                  child: new Text(supplement,
-                                                      style: TextStyle(
-                                                        fontSize: 13,
-                                                        fontFamily:
-                                                            "Montserrat",
-                                                        color: Colors.blue,
+                                                // GestureDetector(
+                                                //   onTap: () {
+                                                //     openURL(supplement);
+                                                //   },
+                                                //   child: new Text(supplement,
+                                                //       style: TextStyle(
+                                                //         fontSize: 13,
+                                                //         fontFamily:
+                                                //             "Montserrat",
+                                                //         color: Colors.blue,
+                                                //         fontWeight:
+                                                //             FontWeight.w400,
+                                                //       )),
+                                                // ),
+                                                Html(
+                                                    style: {
+                                                      "body": Style(
+                                                        padding: EdgeInsets.only(
+                                                            top: 0, left: 0),
+                                                        margin: EdgeInsets.only(
+                                                            top: 8, left: 0),
+                                                        fontSize: FontSize(13.0),
+                                                        fontFamily: "Montserrat",
                                                         fontWeight:
-                                                            FontWeight.w400,
-                                                      )),
-                                                ),
+                                                        FontWeight.w400,
+                                                      ),
+                                                    },
+                                                    data: supplement,
+                                                    onLinkTap: (String url) {
+                                                      openURL(url);
+                                                    }),
                                               ],
                                             )),
                                       ],
@@ -712,307 +744,6 @@ class AnswerImageDialog extends StatelessWidget {
               // basePosition: Alignment.center,
             ),
           ],
-        ),
-      ),
-    );
-  }
-}
-
-class ImageDialog extends StatelessWidget {
-  int index;
-  String url;
-  CaseModel caseModel;
-
-  ImageDialog(this.caseModel);
-
-  @override
-  Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
-    print('Alert size------>${size.width}-------${size.height}');
-    print('Alert ratio------>${caseModel.iHeight / caseModel.iWidth}-------');
-    print(
-        'Alert Image height------>${size.width * (caseModel.iHeight / caseModel.iWidth)}-------');
-    return Dialog(
-      child: Container(
-        width: size.width,
-        height: size.width * (caseModel.iHeight / caseModel.iWidth),
-        child: Stack(
-          children: [
-            PhotoView.customChild(
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  image: DecorationImage(
-                    // ignore: null_aware_in_condition
-                    image: NetworkImage(caseModel?.attachemtnImages?.isNotEmpty
-                        ? caseModel?.attachemtnImages[0]?.serverPath
-                        : ''),
-                    fit: BoxFit.fill,
-                  ),
-                ),
-              ),
-              // childSize: Size(size.width, size.height * 0.6),
-              backgroundDecoration: BoxDecoration(color: Colors.white),
-              // customSize: MediaQuery.of(context).size,
-              enableRotation: false,
-
-              minScale: PhotoViewComputedScale.contained,
-              maxScale: PhotoViewComputedScale.covered * 3,
-              initialScale: PhotoViewComputedScale.contained,
-              // basePosition: Alignment.center,
-            ),
-            ResizebleWidget(
-              child: Image.asset("assets/images/blank_image.png"),
-              // child: Text(
-              //   '''
-              //
-              //
-              //                                             ''',
-              // ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class ResizebleWidget extends StatefulWidget {
-  ResizebleWidget({this.child});
-
-  final Widget child;
-
-  @override
-  _ResizebleWidgetState createState() => _ResizebleWidgetState();
-}
-
-const ballDiameter = 20.0;
-
-class _ResizebleWidgetState extends State<ResizebleWidget> {
-  double height = 200;
-  double width = 200;
-
-  double top = 0;
-  double left = 0;
-
-  void onDrag(double dx, double dy) {
-    var newHeight = height + dy;
-    var newWidth = width + dx;
-
-    setState(() {
-      height = newHeight > 0 ? newHeight : 0;
-      width = newWidth > 0 ? newWidth : 0;
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Stack(
-      children: <Widget>[
-        Positioned(
-          top: top,
-          left: left,
-          child: Container(
-            height: height,
-            width: width,
-            // color: Colors.red[50],
-            child: widget.child,
-          ),
-        ),
-        // top left
-        Positioned(
-          top: top - ballDiameter / 2,
-          left: left - ballDiameter / 2,
-          child: ManipulatingBall(
-            onDrag: (dx, dy) {
-              var mid = (dx + dy) / 2;
-              var newHeight = height - 2 * mid;
-              var newWidth = width - 2 * mid;
-
-              setState(() {
-                height = newHeight > 0 ? newHeight : 0;
-                width = newWidth > 0 ? newWidth : 0;
-                top = top + mid;
-                left = left + mid;
-              });
-            },
-          ),
-        ),
-        // top middle
-        Positioned(
-          top: top - ballDiameter / 2,
-          left: left + width / 2 - ballDiameter / 2,
-          child: ManipulatingBall(
-            onDrag: (dx, dy) {
-              var newHeight = height - dy;
-
-              setState(() {
-                height = newHeight > 0 ? newHeight : 0;
-                top = top + dy;
-              });
-            },
-          ),
-        ),
-        // top right
-        Positioned(
-          top: top - ballDiameter / 2,
-          left: left + width - ballDiameter / 2,
-          child: ManipulatingBall(
-            onDrag: (dx, dy) {
-              var mid = (dx + (dy * -1)) / 2;
-
-              var newHeight = height + 2 * mid;
-              var newWidth = width + 2 * mid;
-
-              setState(() {
-                height = newHeight > 0 ? newHeight : 0;
-                width = newWidth > 0 ? newWidth : 0;
-                top = top - mid;
-                left = left - mid;
-              });
-            },
-          ),
-        ),
-        // center right
-        Positioned(
-          top: top + height / 2 - ballDiameter / 2,
-          left: left + width - ballDiameter / 2,
-          child: ManipulatingBall(
-            onDrag: (dx, dy) {
-              var newWidth = width + dx;
-
-              setState(() {
-                width = newWidth > 0 ? newWidth : 0;
-              });
-            },
-          ),
-        ),
-        // bottom right
-        Positioned(
-          top: top + height - ballDiameter / 2,
-          left: left + width - ballDiameter / 2,
-          child: ManipulatingBall(
-            onDrag: (dx, dy) {
-              var mid = (dx + dy) / 2;
-
-              var newHeight = height + 2 * mid;
-              var newWidth = width + 2 * mid;
-
-              setState(() {
-                height = newHeight > 0 ? newHeight : 0;
-                width = newWidth > 0 ? newWidth : 0;
-                top = top - mid;
-                left = left - mid;
-              });
-            },
-          ),
-        ),
-        // bottom center
-        Positioned(
-          top: top + height - ballDiameter / 2,
-          left: left + width / 2 - ballDiameter / 2,
-          child: ManipulatingBall(
-            onDrag: (dx, dy) {
-              var newHeight = height + dy;
-
-              setState(() {
-                height = newHeight > 0 ? newHeight : 0;
-              });
-            },
-          ),
-        ),
-        // bottom left
-        Positioned(
-          top: top + height - ballDiameter / 2,
-          left: left - ballDiameter / 2,
-          child: ManipulatingBall(
-            onDrag: (dx, dy) {
-              var mid = ((dx * -1) + dy) / 2;
-
-              var newHeight = height + 2 * mid;
-              var newWidth = width + 2 * mid;
-
-              setState(() {
-                height = newHeight > 0 ? newHeight : 0;
-                width = newWidth > 0 ? newWidth : 0;
-                top = top - mid;
-                left = left - mid;
-              });
-            },
-          ),
-        ),
-        //left center
-        Positioned(
-          top: top + height / 2 - ballDiameter / 2,
-          left: left - ballDiameter / 2,
-          child: ManipulatingBall(
-            onDrag: (dx, dy) {
-              var newWidth = width - dx;
-
-              setState(() {
-                width = newWidth > 0 ? newWidth : 0;
-                left = left + dx;
-              });
-            },
-          ),
-        ),
-        // center center
-        Positioned(
-          top: top + height / 2 - ballDiameter / 2,
-          left: left + width / 2 - ballDiameter / 2,
-          child: ManipulatingBall(
-            onDrag: (dx, dy) {
-              setState(() {
-                top = top + dy;
-                left = left + dx;
-              });
-            },
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class ManipulatingBall extends StatefulWidget {
-  ManipulatingBall({Key key, this.onDrag});
-
-  final Function onDrag;
-
-  @override
-  _ManipulatingBallState createState() => _ManipulatingBallState();
-}
-
-class _ManipulatingBallState extends State<ManipulatingBall> {
-  double initX;
-  double initY;
-
-  _handleDrag(details) {
-    setState(() {
-      initX = details.globalPosition.dx;
-      initY = details.globalPosition.dy;
-    });
-  }
-
-  _handleUpdate(details) {
-    var dx = details.globalPosition.dx - initX;
-    var dy = details.globalPosition.dy - initY;
-    initX = details.globalPosition.dx;
-    initY = details.globalPosition.dy;
-    widget.onDrag(dx, dy);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onPanStart: _handleDrag,
-      onPanUpdate: _handleUpdate,
-      child: Container(
-        width: ballDiameter,
-        height: ballDiameter,
-        decoration: BoxDecoration(
-          color: Colors.blue.withOpacity(0.3),
-          shape: BoxShape.circle,
         ),
       ),
     );

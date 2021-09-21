@@ -15,6 +15,7 @@ const String color_0d0e0f = '#0d0e0f';
 const String color_theme = '#50000000';
 const String color_444444 = '#444444';
 const String color_read = '#858585';
+const String color_ffea00 = '#ffea00';
 
 const String PROJECT_NAME = "ECG Library";
 const String CASES_TABLE = 'Cases';

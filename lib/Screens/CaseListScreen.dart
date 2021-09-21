@@ -31,6 +31,7 @@ class _CaseListScreenState extends State<CaseListScreen> {
   var _isVisible = false;
   var _isProgressVisible = false;
   QueryDocumentSnapshot queryDocumentSnapshot;
+
   // ignore: deprecated_member_use
   List<CaseModel> caseModels = new List<CaseModel>();
 
@@ -194,7 +195,8 @@ class _CaseListScreenState extends State<CaseListScreen> {
     }
     //     // model.updatedTime = doc.data()[UPDATED_TIME] ?? '';
     model.attachments = new List<String>.from(result.data()[ATTACHMENTS] ?? []);
-    model.rationaleAttachments = new List<String>.from(result.data()[RATIONALE_ATTACHMENTS] ?? []);
+    model.rationaleAttachments =
+        new List<String>.from(result.data()[RATIONALE_ATTACHMENTS] ?? []);
     return model;
   }
 
@@ -239,7 +241,7 @@ class _CaseListScreenState extends State<CaseListScreen> {
     return Scaffold(
         primary: true,
         appBar: AppBar(
-          title: Text(level),
+          title: Text(level, style: TextStyle(fontSize: 18.0)),
           backgroundColor: primaryColor,
           brightness: Brightness.dark,
         ),
@@ -284,7 +286,7 @@ class _CaseListScreenState extends State<CaseListScreen> {
                         },
                         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                             // childAspectRatio: 5/2,
-                            childAspectRatio: (itemWidth / itemHeight),
+                            childAspectRatio: (itemWidth / (itemHeight - 9)),
                             crossAxisCount: 2),
                       ),
                     ),
@@ -308,7 +310,7 @@ class _CaseListScreenState extends State<CaseListScreen> {
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
                                       Text(
-                                        '${currentPage}',
+                                        'Page ${currentPage}',
                                         textScaleFactor: 1,
                                         style: TextStyle(
                                             fontSize: 15,
@@ -390,7 +392,8 @@ class _CaseListScreenState extends State<CaseListScreen> {
     print('openCaseDetailScreen');
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => CaseDetails(index, caseModels,currentPage)),
+      MaterialPageRoute(
+          builder: (context) => CaseDetails(index, caseModels, currentPage)),
     ).then((value) => {getCaseDataBySequence()});
     // Navigator.push(
     //     context,
@@ -461,7 +464,7 @@ class CaseCard extends StatelessWidget {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     // print('screenHeightExcludingToolbar---${remainingHeight}');
-    double itemHeight = remainingHeight / 12;
+    double itemHeight = remainingHeight / 14;
     // print('item height--${itemHeight}');
     double textSize = ((itemHeight) / 4.5);
     if (textSize < 14) textSize = 14;

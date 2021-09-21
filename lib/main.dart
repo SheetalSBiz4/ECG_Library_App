@@ -13,8 +13,8 @@ void main() async {
     await FirebaseCrashlytics.instance
         .setCrashlyticsCollectionEnabled(false);
   }
-  Map<String, String> env = await loadEnvFile("assets/env/.env_production");
-  // Map<String, String> env = await loadEnvFile("assets/env/.env_testing");
+  // Map<String, String> env = await loadEnvFile("assets/env/.env_production");
+  Map<String, String> env = await loadEnvFile("assets/env/.env_testing");
   // Map<String, String> env = await loadEnvFile("assets/env/.env_dev");
   print('maib---${env}');
   runApp(MyApp(env));
