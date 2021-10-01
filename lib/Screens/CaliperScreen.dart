@@ -6,6 +6,7 @@ import 'package:photo_view/photo_view.dart';
 
 import '../constants.dart';
 
+// ignore: must_be_immutable
 class CaliperScreen extends StatefulWidget {
   String attachmentUrl;
 
@@ -129,9 +130,9 @@ class _CaliperScreenState extends State<CaliperScreen> {
                             // basePosition: Alignment.center,
                           ),
                           Visibility(
-                              child: ResizebleWidget(
+                              child: ResizableWidget(
                                 child: Image.asset(
-                                    "assets/images/blank_image.png"),
+                                    "assets/images/ic_cliaper_image.png"),
                               ),
                               visible: isShow),
                         ],
@@ -148,18 +149,18 @@ class _CaliperScreenState extends State<CaliperScreen> {
   }
 }
 
-class ResizebleWidget extends StatefulWidget {
-  ResizebleWidget({this.child});
+class ResizableWidget extends StatefulWidget {
+  ResizableWidget({this.child});
 
   final Widget child;
 
   @override
-  _ResizebleWidgetState createState() => _ResizebleWidgetState();
+  _ResizableWidgetState createState() => _ResizableWidgetState();
 }
 
-const ballDiameter = 20.0;
+const ballDiameter = 15.0;
 
-class _ResizebleWidgetState extends State<ResizebleWidget> {
+class _ResizableWidgetState extends State<ResizableWidget> {
   double height = 200;
   double width = 200;
 
@@ -381,8 +382,9 @@ class _ManipulatingBallState extends State<ManipulatingBall> {
       child: Container(
         width: ballDiameter,
         height: ballDiameter,
+        padding: EdgeInsets.all(20),
         decoration: BoxDecoration(
-          color: HexColor('#0030ff').withOpacity(0.2),
+          color: HexColor('#0030ff').withOpacity(0.15),
           shape: BoxShape.circle,
         ),
       ),

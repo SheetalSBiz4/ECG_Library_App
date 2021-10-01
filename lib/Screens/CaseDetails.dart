@@ -172,15 +172,19 @@ class _CaseDetailsState extends State<CaseDetails> {
     bool isSupplementShow = true;
     bool isAnswerImageShow = true;
     bool isReferenceShow = true;
-    // print('size------>${size.width}-------${size.height}');
-    // print('ratio------>${caseModel.iHeight / caseModel.iWidth}-------');
-    // print(
-    //     'Image height------>${size.width * (caseModel.iHeight / caseModel.iWidth)}-------');
+
+    // print("=======================================================");
+    // print(caseModel?.references);
+    // print(caseModel?.supplement);
+
     String reference = caseModel?.references?.replaceAll("<p>", "");
     String supplement = caseModel?.supplement?.replaceAll("<p>", "");
+    reference.replaceAll("</p>", "");
+    supplement.replaceAll("</p>", "");
 
-    print(reference);
-    print(supplement);
+    // print("=======================================================");
+    // print(reference);
+    // print(supplement);
 
     if (supplement.isEmpty || !supplement.startsWith('<a href="http') || !supplement.startsWith('<a href="https')) {
       isSupplementShow = false;
@@ -319,13 +323,17 @@ class _CaseDetailsState extends State<CaseDetails> {
                                       ),
                                     ),
                                     onTap: () async {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) => CaliperScreen(
-                                                caseModel?.attachemtnImages[0]
-                                                    ?.serverPath)),
-                                      );
+                                      Fluttertoast.showToast(
+                                          msg: " Caliper screen coming soon...  ");
+
+                                      // Navigator.push(
+                                      //   context,
+                                      //   MaterialPageRoute(
+                                      //       builder: (context) => CaliperScreen(
+                                      //           caseModel?.attachemtnImages[0]
+                                      //               ?.serverPath)),
+                                      // );
+
                                     },
                                   ),
                                   // childSize: Size(size.width, size.height * 0.6),
