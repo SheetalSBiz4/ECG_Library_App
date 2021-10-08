@@ -29,6 +29,7 @@ class _CaliperScreenState extends State<CaliperScreen> {
 
   bool disabeScroll = false;
   String attachmentUrl;
+  var caliperImage = "assets/images/hide.png";
 
   _CaliperScreenState(this.attachmentUrl);
 
@@ -46,48 +47,12 @@ class _CaliperScreenState extends State<CaliperScreen> {
     ]);
   }
 
-  void changeCaliperView(bool val) {
-    setState(() {
-      isShow = !isShow;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     // var bottomBarHeight = MediaQuery.of(context).padding.bottom;
 
     return Scaffold(
-      appBar: AppBar(
-          toolbarHeight: 40,
-          title: Text("Caliper Screen"),
-          backgroundColor: primaryColor,
-          brightness: Brightness.dark,
-          leading: new IconButton(
-            icon: new Icon(Icons.arrow_back_ios_outlined),
-            onPressed: () {
-              Navigator.pop(context);
-            },
-          ),
-          actions: <Widget>[
-            Switch(
-              onChanged: changeCaliperView,
-              value: !isShow,
-              activeColor: HexColor(color_ffffff),
-              activeTrackColor: HexColor(color_676767),
-              inactiveThumbColor: HexColor(color_ffffff),
-              inactiveTrackColor: HexColor(color_676767),
-            ),
-            (isShow
-                ? IconButton(
-                    icon: Image.asset("assets/images/show.png"),
-                    onPressed: () {},
-                  )
-                : IconButton(
-                    icon: Image.asset("assets/images/hide.png"),
-                    onPressed: () {},
-                  )),
-          ]),
       body: Container(
         color: HexColor(color_theme),
         child: SafeArea(
@@ -107,7 +72,7 @@ class _CaliperScreenState extends State<CaliperScreen> {
                   Center(
                     child: Container(
                       width: size.width,
-                      height: size.height - 100,
+                      height: size.height - 40,
                       // padding: EdgeInsets.all(0),
                       child: Stack(
                         children: [
@@ -125,7 +90,7 @@ class _CaliperScreenState extends State<CaliperScreen> {
                                 BoxDecoration(color: Colors.white),
                             enableRotation: false,
                             minScale: PhotoViewComputedScale.contained,
-                            maxScale: PhotoViewComputedScale.covered * 3,
+                            maxScale: PhotoViewComputedScale.covered * 6,
                             initialScale: PhotoViewComputedScale.contained,
                             // basePosition: Alignment.center,
                           ),
@@ -135,6 +100,36 @@ class _CaliperScreenState extends State<CaliperScreen> {
                                     "assets/images/ic_cliaper_image.png"),
                               ),
                               visible: isShow),
+                          Align(
+                            alignment: Alignment.topLeft,
+                            child: IconButton(
+                              icon: Image.asset("assets/images/close.png"),
+                              iconSize: 25,
+                              onPressed: () {
+                                setState(() {
+                                  Navigator.pop(context);
+                                });
+                              },
+                            ),
+                          ),
+                          Align(
+                              alignment: Alignment.topRight,
+                              child: IconButton(
+                                icon: Image.asset(caliperImage),
+                                iconSize: 30,
+                                alignment: Alignment.center,
+                                onPressed: () {
+                                  setState(() {
+                                    isShow = !isShow;
+                                    print("IsShow :$isShow");
+                                    if (isShow) {
+                                      caliperImage = "assets/images/show.png";
+                                    } else {
+                                      caliperImage = "assets/images/hide.png";
+                                    }
+                                  });
+                                },
+                              )),
                         ],
                       ),
                     ),
@@ -158,14 +153,14 @@ class ResizableWidget extends StatefulWidget {
   _ResizableWidgetState createState() => _ResizableWidgetState();
 }
 
-const ballDiameter = 15.0;
+const ballDiameter = 20.0;
 
 class _ResizableWidgetState extends State<ResizableWidget> {
   double height = 200;
   double width = 200;
 
-  double top = 10;
-  double left = 10;
+  double top = 60;
+  double left = 100;
 
   void onDrag(double dx, double dy) {
     var newHeight = height + dy;
@@ -240,7 +235,7 @@ class _ResizableWidgetState extends State<ResizableWidget> {
                 height = newHeight > 0 ? newHeight : 0;
                 width = newWidth > 0 ? newWidth : 0;
                 top = top - mid;
-                left = left - mid;
+                // left = left - mid;
               });
             },
           ),
@@ -274,7 +269,7 @@ class _ResizableWidgetState extends State<ResizableWidget> {
                 height = newHeight > 0 ? newHeight : 0;
                 width = newWidth > 0 ? newWidth : 0;
                 top = top - mid;
-                left = left - mid;
+                // left = left - mid;
               });
             },
           ),

@@ -100,6 +100,7 @@ flutter:
     - assets/images/img_sol.png
     - assets/images/hide.png
     - assets/images/show.png
+    - assets/images/close.png
     - assets/images/previous_disable.svg
     - assets/images/previous_enable.svg
     - assets/images/next_enable.svg

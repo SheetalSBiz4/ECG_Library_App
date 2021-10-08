@@ -8,7 +8,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_html/style.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -56,8 +55,6 @@ class _CaseDetailsState extends State<CaseDetails> {
   Future<void> initState() {
     super.initState();
     controller = PhotoViewController();
-    // print("caseModels >>>>>>>>>>>${caseModels.length}");
-    // print("pageCount >>>>>>>>>>>${pageCount}");
     rotateToLandscape();
     getImagesFromFB();
     getAnswerImageFromFB();
@@ -173,24 +170,20 @@ class _CaseDetailsState extends State<CaseDetails> {
     bool isAnswerImageShow = true;
     bool isReferenceShow = true;
 
-    // print("=======================================================");
-    // print(caseModel?.references);
-    // print(caseModel?.supplement);
-
     String reference = caseModel?.references?.replaceAll("<p>", "");
     String supplement = caseModel?.supplement?.replaceAll("<p>", "");
     reference.replaceAll("</p>", "");
     supplement.replaceAll("</p>", "");
 
-    // print("=======================================================");
-    // print(reference);
-    // print(supplement);
-
-    if (supplement.isEmpty || !supplement.startsWith('<a href="http') || !supplement.startsWith('<a href="https')) {
+    if (supplement.isEmpty ||
+        !supplement.startsWith('<a href="http') ||
+        !supplement.startsWith('<a href="https')) {
       isSupplementShow = false;
     }
 
-    if (reference.isEmpty || !reference.startsWith('<a href="http') || !reference.startsWith('<a href="https')) {
+    if (reference.isEmpty ||
+        !reference.startsWith('<a href="http') ||
+        !reference.startsWith('<a href="https')) {
       isReferenceShow = false;
     }
 
@@ -323,17 +316,16 @@ class _CaseDetailsState extends State<CaseDetails> {
                                       ),
                                     ),
                                     onTap: () async {
-                                      Fluttertoast.showToast(
-                                          msg: " Caliper screen coming soon...  ");
+                                      // Fluttertoast.showToast(
+                                      //     msg: " Caliper screen coming soon...  ");
 
-                                      // Navigator.push(
-                                      //   context,
-                                      //   MaterialPageRoute(
-                                      //       builder: (context) => CaliperScreen(
-                                      //           caseModel?.attachemtnImages[0]
-                                      //               ?.serverPath)),
-                                      // );
-
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) => CaliperScreen(
+                                                caseModel?.attachemtnImages[0]
+                                                    ?.serverPath)),
+                                      );
                                     },
                                   ),
                                   // childSize: Size(size.width, size.height * 0.6),
@@ -470,11 +462,11 @@ class _CaseDetailsState extends State<CaseDetails> {
                                                       padding: EdgeInsets.only(
                                                           top: 0, left: 0),
                                                       margin: EdgeInsets.only(
-                                                          top: 8, left: 0),
+                                                          top: 0, left: 0),
                                                       fontSize: FontSize(13.0),
                                                       fontFamily: "Montserrat",
                                                       fontWeight:
-                                                      FontWeight.w400,
+                                                          FontWeight.w400,
                                                     ),
                                                   },
                                                   data: reference,
@@ -495,7 +487,7 @@ class _CaseDetailsState extends State<CaseDetails> {
                                               children: [
                                                 Container(
                                                   margin: EdgeInsets.only(
-                                                      top: 15, bottom: 8),
+                                                      top:0, bottom: 8),
                                                   child: Text('SUPPLEMENT:',
                                                       textScaleFactor: 1,
                                                       style: TextStyle(
@@ -524,14 +516,18 @@ class _CaseDetailsState extends State<CaseDetails> {
                                                 Html(
                                                     style: {
                                                       "body": Style(
-                                                        padding: EdgeInsets.only(
-                                                            top: 0, left: 0),
+                                                        padding:
+                                                            EdgeInsets.only(
+                                                                top: 0,
+                                                                left: 0),
                                                         margin: EdgeInsets.only(
-                                                            top: 8, left: 0),
-                                                        fontSize: FontSize(13.0),
-                                                        fontFamily: "Montserrat",
+                                                            top: 0, left: 0),
+                                                        fontSize:
+                                                            FontSize(13.0),
+                                                        fontFamily:
+                                                            "Montserrat",
                                                         fontWeight:
-                                                        FontWeight.w400,
+                                                            FontWeight.w400,
                                                       ),
                                                     },
                                                     data: supplement,
