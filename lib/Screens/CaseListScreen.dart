@@ -180,7 +180,7 @@ class _CaseListScreenState extends State<CaseListScreen> {
 
     CaseModel model = new CaseModel();
     model.id = result.id;
-    //     // model.createdTime = doc.data()[CREATED_TIME] ?? '';
+    // model.createdTime = doc.data()[CREATED_TIME] ?? '';
     model.details = result.data()[DETAILS] ?? '';
     model.nextStep = result.data()[NEXTSTEP] ?? '';
     model.result = result.data()[RESULT] ?? '';
@@ -389,11 +389,11 @@ class _CaseListScreenState extends State<CaseListScreen> {
   }
 
   openCaseDetailScreen(int index, BuildContext context) {
-    print('openCaseDetailScreen');
     Navigator.push(
       context,
       MaterialPageRoute(
-          builder: (context) => CaseDetails(index, caseModels, currentPage)),
+          builder: (context) =>
+              CaseDetails(index, caseModels, currentPage, level)),
     ).then((value) => {getCaseDataBySequence()});
     // Navigator.push(
     //     context,

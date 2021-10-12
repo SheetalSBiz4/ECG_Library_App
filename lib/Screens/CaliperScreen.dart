@@ -79,10 +79,10 @@ class _CaliperScreenState extends State<CaliperScreen> {
                           PhotoView.customChild(
                             child: Container(
                               decoration: BoxDecoration(
-                                color: Colors.white,
+                                color: Colors.black,
                                 image: DecorationImage(
                                   image: NetworkImage(attachmentUrl),
-                                  fit: BoxFit.fill,
+                                  // fit: BoxFit.fill,
                                 ),
                               ),
                             ),

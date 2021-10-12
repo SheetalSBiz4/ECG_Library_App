@@ -21,12 +21,13 @@ class CaseDetails extends StatefulWidget {
   List<CaseModel> caseModels;
   int index;
   int pageCount;
+  String level;
 
-  CaseDetails(this.index, this.caseModels, this.pageCount);
+  CaseDetails(this.index, this.caseModels, this.pageCount, this.level);
 
   @override
   _CaseDetailsState createState() {
-    return _CaseDetailsState(this.index, this.caseModels, this.pageCount);
+    return _CaseDetailsState(this.index, this.caseModels, this.pageCount,this.level);
   }
 }
 
@@ -36,6 +37,7 @@ class _CaseDetailsState extends State<CaseDetails> {
   bool nextEnable = false;
   bool isPortrait = false;
   int pageCount;
+  String level;
 
   var _isProgressVisible = false;
   CaseModel caseModel;
@@ -49,7 +51,7 @@ class _CaseDetailsState extends State<CaseDetails> {
 
   bool _isShowProgress = true;
 
-  _CaseDetailsState(this.index, this.caseModels, this.pageCount);
+  _CaseDetailsState(this.index, this.caseModels, this.pageCount, this.level);
 
   @override
   Future<void> initState() {
@@ -366,7 +368,7 @@ class _CaseDetailsState extends State<CaseDetails> {
                                         Container(
                                           margin: EdgeInsets.only(
                                               bottom: 8, top: 20),
-                                          child: Text('DIAGNOSIS:',
+                                          child: Text('Diagnosis:',
                                               textScaleFactor: 1,
                                               style: TextStyle(
                                                   fontSize: 14,
@@ -384,7 +386,7 @@ class _CaseDetailsState extends State<CaseDetails> {
                                         Container(
                                           margin: EdgeInsets.only(
                                               top: 15, bottom: 8),
-                                          child: Text('RATIONALE:',
+                                          child: Text('Rationale:',
                                               textScaleFactor: 1,
                                               style: TextStyle(
                                                   fontSize: 14,
@@ -432,10 +434,10 @@ class _CaseDetailsState extends State<CaseDetails> {
                                               Container(
                                                 margin: EdgeInsets.only(
                                                     top: 8, bottom: 8),
-                                                child: Text('REFERENCES:',
+                                                child: Text('References:',
                                                     textScaleFactor: 1,
                                                     style: TextStyle(
-                                                        fontSize: 14,
+                                                        fontSize: 12,
                                                         color: HexColor(
                                                             color_ffea00),
                                                         fontFamily:
@@ -488,10 +490,10 @@ class _CaseDetailsState extends State<CaseDetails> {
                                                 Container(
                                                   margin: EdgeInsets.only(
                                                       top:0, bottom: 8),
-                                                  child: Text('SUPPLEMENT:',
+                                                  child: Text('Supplement:',
                                                       textScaleFactor: 1,
                                                       style: TextStyle(
-                                                          fontSize: 14,
+                                                          fontSize: 12,
                                                           color: HexColor(
                                                               color_ffea00),
                                                           fontFamily:
@@ -523,7 +525,7 @@ class _CaseDetailsState extends State<CaseDetails> {
                                                         margin: EdgeInsets.only(
                                                             top: 0, left: 0),
                                                         fontSize:
-                                                            FontSize(13.0),
+                                                            FontSize(12.0),
                                                         fontFamily:
                                                             "Montserrat",
                                                         fontWeight:
@@ -706,7 +708,7 @@ class _CaseDetailsState extends State<CaseDetails> {
 }
 
 // ignore: must_be_immutable
-class AnswerImageDialog extends StatelessWidget {
+class AnswerImageDialog extends StatelessWidget  {
   int index;
   String url;
   CaseModel caseModel;
@@ -725,7 +727,7 @@ class AnswerImageDialog extends StatelessWidget {
             PhotoView.customChild(
               child: Container(
                 decoration: BoxDecoration(
-                  color: Colors.white30,
+                  color: Colors.black87,
                   image: DecorationImage(
                     // ignore: null_aware_in_condition
                     image: NetworkImage(
@@ -733,7 +735,7 @@ class AnswerImageDialog extends StatelessWidget {
                         caseModel?.rationaleAttachments?.isNotEmpty
                             ? caseModel?.answerImages[0]?.serverPath
                             : ''),
-                    fit: BoxFit.fill,
+                    // fit: BoxFit.fill,
                   ),
                 ),
               ),
