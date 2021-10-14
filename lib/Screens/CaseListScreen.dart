@@ -280,7 +280,7 @@ class _CaseListScreenState extends State<CaseListScreen> {
                             caseModel: caseModels[index],
                             selectedIndex: index,
                             selectedItemUUID: (int) =>
-                                openCaseDetailScreen(int, context),
+                                openCaseDetailScreen(int, context, totalPages),
                             remainingHeight: remainingHeight,
                           );
                         },
@@ -388,12 +388,12 @@ class _CaseListScreenState extends State<CaseListScreen> {
     Navigator.of(_keyLoader.currentContext, rootNavigator: true).pop();
   }
 
-  openCaseDetailScreen(int index, BuildContext context) {
+  openCaseDetailScreen(int index, BuildContext context, int totalPages) {
     Navigator.push(
       context,
       MaterialPageRoute(
           builder: (context) =>
-              CaseDetails(index, caseModels, currentPage, level)),
+              CaseDetails(index, caseModels, currentPage, level, totalPages)),
     ).then((value) => {getCaseDataBySequence()});
     // Navigator.push(
     //     context,

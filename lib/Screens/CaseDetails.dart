@@ -1,5 +1,9 @@
+import 'dart:collection';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ecg/Models/CaseImageModel.dart';
 import 'package:ecg/Models/CaseModel.dart';
+import 'package:ecg/customs/LoaderTransparent.dart';
 import 'package:ecg/util/SharedPreferenceManager.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
@@ -8,12 +12,14 @@ import 'package:flutter/services.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_html/style.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../Models/CaseModel.dart';
 import '../constants.dart';
+import 'AnswerImageScreen.dart';
 import 'CaliperScreen.dart';
 import 'WebViewScreen.dart';
 
@@ -22,12 +28,15 @@ class CaseDetails extends StatefulWidget {
   int index;
   int pageCount;
   String level;
+  int totalPages;
 
-  CaseDetails(this.index, this.caseModels, this.pageCount, this.level);
+  CaseDetails(
+      this.index, this.caseModels, this.pageCount, this.level, this.totalPages);
 
   @override
   _CaseDetailsState createState() {
-    return _CaseDetailsState(this.index, this.caseModels, this.pageCount,this.level);
+    return _CaseDetailsState(this.index, this.caseModels, this.pageCount,
+        this.level, this.totalPages);
   }
 }
 
@@ -38,6 +47,7 @@ class _CaseDetailsState extends State<CaseDetails> {
   bool isPortrait = false;
   int pageCount;
   String level;
+  int totalPages;
 
   var _isProgressVisible = false;
   CaseModel caseModel;
@@ -51,11 +61,23 @@ class _CaseDetailsState extends State<CaseDetails> {
 
   bool _isShowProgress = true;
 
-  _CaseDetailsState(this.index, this.caseModels, this.pageCount, this.level);
+  int currentPage;
+
+  int LIMIT_RECORD = 20;
+
+  int totalPageCount;
+
+  bool _isNextPageVisible = false;
+
+  bool finishedAllCase = false;
+
+  _CaseDetailsState(this.index, this.caseModels, this.pageCount, this.level,
+      this.totalPageCount);
 
   @override
   Future<void> initState() {
     super.initState();
+    currentPage = pageCount;
     controller = PhotoViewController();
     rotateToLandscape();
     getImagesFromFB();
@@ -105,7 +127,6 @@ class _CaseDetailsState extends State<CaseDetails> {
     await saveReadStatus(caseModel.id);
     List<CaseImageModel> imageUrls = [];
     caseModel?.attachments?.forEach((imageName) async {
-      // print('Image NAme---${imageName}');
       final ref = FirebaseStorage.instance
           .ref()
           .child(FB_ENV)
@@ -113,10 +134,8 @@ class _CaseDetailsState extends State<CaseDetails> {
           .child(FB_ATTACHMENT)
           .child(imageName);
       var url = await ref.getDownloadURL();
-      // print(url);
       CaseImageModel image = new CaseImageModel(url);
       imageUrls.add(image);
-      // print('imageUrls---->${imageUrls}');
       setState(() {
         _isShowProgress = false;
         caseModel.attachemtnImages = imageUrls;
@@ -135,7 +154,6 @@ class _CaseDetailsState extends State<CaseDetails> {
     await saveReadStatus(caseModel.id);
     List<CaseImageModel> imageUrls = [];
     caseModel?.rationaleAttachments?.forEach((imageName) async {
-      // print('Image NAme---${imageName}');
       final ref = FirebaseStorage.instance
           .ref()
           .child(FB_ENV)
@@ -143,10 +161,8 @@ class _CaseDetailsState extends State<CaseDetails> {
           .child(FB_RATIONALE_ATTACHMENT)
           .child(imageName);
       var url = await ref.getDownloadURL();
-      // print(url);
       CaseImageModel image = new CaseImageModel(url);
       imageUrls.add(image);
-      // print('answerImages---->${imageUrls}');
       setState(() {
         caseModel.answerImages = imageUrls;
       });
@@ -208,6 +224,19 @@ class _CaseDetailsState extends State<CaseDetails> {
       totalCount = '${caseModels?.length}';
     }
 
+    if (totalCount == selectedCount) {
+      setState(() {
+        if (finishedAllCase) {
+          _isNextPageVisible = false;
+          nextEnable = false;
+        } else {
+          _isNextPageVisible = true;
+        }
+      });
+    } else {
+      _isNextPageVisible = false;
+    }
+
     return Scaffold(
       appBar: AppBar(
           toolbarHeight: 40,
@@ -260,6 +289,7 @@ class _CaseDetailsState extends State<CaseDetails> {
                       child: Column(children: <Widget>[
                         SizedBox(height: 30),
                         CircularProgressIndicator()
+                        //_isProgressVisible? LoaderTransparent() : Container();
                       ])),
                   Expanded(
                     child: PhotoView.customChild(
@@ -318,9 +348,6 @@ class _CaseDetailsState extends State<CaseDetails> {
                                       ),
                                     ),
                                     onTap: () async {
-                                      // Fluttertoast.showToast(
-                                      //     msg: " Caliper screen coming soon...  ");
-
                                       Navigator.push(
                                         context,
                                         MaterialPageRoute(
@@ -408,12 +435,21 @@ class _CaseDetailsState extends State<CaseDetails> {
                                                 top: 15, bottom: 8),
                                             child: InkWell(
                                               onTap: () {
-                                                showDialog(
-                                                    context: context,
-                                                    barrierDismissible: true,
-                                                    builder: (_) =>
-                                                        AnswerImageDialog(
-                                                            caseModel));
+                                                Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      // ignore: null_aware_in_condition
+                                                      builder: (context) =>
+                                                          // ignore: null_aware_in_condition
+                                                          AnswerImageScreen(caseModel
+                                                                  ?.rationaleAttachments
+                                                                  ?.isNotEmpty
+                                                              ? caseModel
+                                                                  ?.answerImages[
+                                                                      0]
+                                                                  ?.serverPath
+                                                              : '')),
+                                                );
                                               },
                                               child: Image.asset(
                                                   'assets/images/img_sol.png',
@@ -445,19 +481,6 @@ class _CaseDetailsState extends State<CaseDetails> {
                                                         fontWeight:
                                                             FontWeight.w700)),
                                               ),
-                                              // GestureDetector(
-                                              //   onTap: () {
-                                              //     openURL(reference);
-                                              //   },
-                                              //   child: new Text(reference,
-                                              //       style: TextStyle(
-                                              //         fontSize: 13,
-                                              //         fontFamily: "Montserrat",
-                                              //         color: Colors.blue,
-                                              //         fontWeight:
-                                              //             FontWeight.w400,
-                                              //       )),
-                                              // ),
                                               Html(
                                                   style: {
                                                     "body": Style(
@@ -489,7 +512,7 @@ class _CaseDetailsState extends State<CaseDetails> {
                                               children: [
                                                 Container(
                                                   margin: EdgeInsets.only(
-                                                      top:0, bottom: 8),
+                                                      top: 0, bottom: 8),
                                                   child: Text('Supplement:',
                                                       textScaleFactor: 1,
                                                       style: TextStyle(
@@ -501,20 +524,6 @@ class _CaseDetailsState extends State<CaseDetails> {
                                                           fontWeight:
                                                               FontWeight.w700)),
                                                 ),
-                                                // GestureDetector(
-                                                //   onTap: () {
-                                                //     openURL(supplement);
-                                                //   },
-                                                //   child: new Text(supplement,
-                                                //       style: TextStyle(
-                                                //         fontSize: 13,
-                                                //         fontFamily:
-                                                //             "Montserrat",
-                                                //         color: Colors.blue,
-                                                //         fontWeight:
-                                                //             FontWeight.w400,
-                                                //       )),
-                                                // ),
                                                 Html(
                                                     style: {
                                                       "body": Style(
@@ -546,7 +555,6 @@ class _CaseDetailsState extends State<CaseDetails> {
                           ),
                         ),
                       ),
-                      // childSize: Size(size.width, size.height * 0.6),
                       backgroundDecoration:
                           BoxDecoration(color: HexColor(color_theme)),
                       // customSize: MediaQuery.of(context).size,
@@ -605,7 +613,6 @@ class _CaseDetailsState extends State<CaseDetails> {
                                         fontWeight: FontWeight.w500),
                                   ),
                                   Text(
-                                    // ' of ${pageCount * 10 + caseModels?.length}',
                                     ' of $totalCount',
                                     textScaleFactor: 1,
                                     style: TextStyle(
@@ -640,23 +647,40 @@ class _CaseDetailsState extends State<CaseDetails> {
                                           height: 24,
                                         ),
                                       )),
-                                SizedBox(width: 53),
-                                (nextEnable
-                                    ? GestureDetector(
-                                        child: SvgPicture.asset(
-                                          'assets/images/next_enable.svg',
-                                          height: 24,
-                                        ),
-                                        onTap: () {
-                                          loadNextCase();
-                                        },
-                                      )
-                                    : GestureDetector(
-                                        child: SvgPicture.asset(
-                                          'assets/images/next_disable.svg',
-                                          height: 24,
-                                        ),
-                                      )),
+                                SizedBox(width: 50),
+                                Visibility(
+                                  visible: !_isNextPageVisible,
+                                  child: (nextEnable
+                                      ? GestureDetector(
+                                          child: SvgPicture.asset(
+                                            'assets/images/next_enable.svg',
+                                            height: 24,
+                                          ),
+                                          onTap: () {
+                                            loadNextCase();
+                                          },
+                                        )
+                                      : GestureDetector(
+                                          child: SvgPicture.asset(
+                                            'assets/images/next_disable.svg',
+                                            height: 24,
+                                          ),
+                                        )),
+                                ),
+                                Visibility(
+                                  visible: _isNextPageVisible,
+                                  child: (true
+                                      ? GestureDetector(
+                                          child: SvgPicture.asset(
+                                            'assets/images/next_page.svg',
+                                            height: 24,
+                                          ),
+                                          onTap: () {
+                                            getCaseDataBySequence();
+                                          },
+                                        )
+                                      : ''),
+                                )
                               ],
                             ),
                           ),
@@ -669,6 +693,96 @@ class _CaseDetailsState extends State<CaseDetails> {
         ),
       ),
     );
+  }
+
+  getCaseDataBySequence() {
+    setState(() {
+      currentPage = currentPage + 1;
+      _isProgressVisible = true;
+    });
+    final databaseReference = FirebaseFirestore.instance;
+    databaseReference
+        .collection(FB_ENV)
+        .doc(ENV)
+        .collection(COLLECTION_LEVEL)
+        .doc(level)
+        .collection(STATS_TABLE)
+        .doc('totalStats')
+        .get()
+        .then((value) async {
+      print('value?.data()--->${value?.data()}');
+      List<String> allSequence =
+          new List<String>.from(value?.data()['sequence'] ?? []);
+      List<String> readList = await getReadStatusList();
+      if (allSequence.isNotEmpty) {
+        totalPages = ((allSequence?.length / LIMIT_RECORD).ceil());
+        int endLimit = allSequence?.length;
+        if ((currentPage * LIMIT_RECORD) < allSequence?.length)
+          endLimit = currentPage * LIMIT_RECORD;
+        else
+          endLimit = allSequence?.length;
+        List<String> sequence =
+            allSequence.sublist(((currentPage - 1) * 20), endLimit);
+        for (var caseId in sequence) {
+          var model = await getCase(caseId);
+          if (model.isPublish) {
+            if (readList.contains(model?.id)) model.isRead = true;
+            caseModels.add(model);
+          }
+        }
+        setState(() {
+          Fluttertoast.showToast(msg: "More case added for you.");
+          nextEnable = true;
+          if (endLimit == allSequence?.length) {
+            finishedAllCase = true;
+          }
+          _isProgressVisible = false;
+        });
+      } else {
+        setState(() {
+          _isProgressVisible = false;
+        });
+      }
+    }).catchError((onError) async {
+      print('getStats error---->${onError}');
+      setState(() {
+        _isProgressVisible = false;
+      });
+    });
+  }
+
+  Future<CaseModel> getCase(String caseID) async {
+    // print('caseid------>${caseID}');
+    final databaseReference = FirebaseFirestore.instance;
+    var result = await databaseReference
+        .collection(FB_ENV)
+        .doc(ENV)
+        .collection(COLLECTION_LEVEL)
+        .doc(level)
+        .collection(CASES_TABLE)
+        .doc(caseID)
+        .get();
+
+    CaseModel model = new CaseModel();
+    model.id = result.id;
+    // model.createdTime = doc.data()[CREATED_TIME] ?? '';
+    model.details = result.data()[DETAILS] ?? '';
+    model.nextStep = result.data()[NEXTSTEP] ?? '';
+    model.result = result.data()[RESULT] ?? '';
+    model.references = result.data()[REFERENCES] ?? '';
+    model.skillLevel = result.data()[SKILL_LEVEL] ?? '';
+    model.supplement = result.data()[SUPPLEMENT] ?? '';
+    model.isPublish = result.data()[IS_PUBLISH] ?? false;
+    if (result.data()[DIMENSIONS] != null) {
+      var hashmap = new HashMap.from(result.data()[DIMENSIONS]) ?? null;
+      model.iWidth = hashmap[WIDTH]?.toDouble();
+      model.iHeight = hashmap[HEIGHT]?.toDouble();
+    }
+    //     // model.updatedTime = doc.data()[UPDATED_TIME] ?? '';
+    model.attachments = new List<String>.from(result.data()[ATTACHMENTS] ?? []);
+    model.rationaleAttachments =
+        new List<String>.from(result.data()[RATIONALE_ATTACHMENTS] ?? []);
+    return model;
   }
 
   void loadNextCase() {
@@ -708,7 +822,7 @@ class _CaseDetailsState extends State<CaseDetails> {
 }
 
 // ignore: must_be_immutable
-class AnswerImageDialog extends StatelessWidget  {
+class AnswerImageDialog extends StatelessWidget {
   int index;
   String url;
   CaseModel caseModel;
@@ -721,7 +835,7 @@ class AnswerImageDialog extends StatelessWidget  {
     return Dialog(
       child: Container(
         width: size.width,
-        height: size.width * (caseModel.iHeight / caseModel.iWidth),
+        height: size.height,
         child: Stack(
           children: [
             PhotoView.customChild(

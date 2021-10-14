@@ -105,6 +105,7 @@ flutter:
     - assets/images/previous_enable.svg
     - assets/images/next_enable.svg
     - assets/images/next_disable.svg
+    - assets/images/next_page.svg
     - assets/images/back_to_list.svg
     - assets/images/loader_red.gif
     - assets/placeholder.png
