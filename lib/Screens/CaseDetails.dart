@@ -761,7 +761,7 @@ class _CaseDetailsState extends State<CaseDetails> {
           }
         }
         setState(() {
-          Fluttertoast.showToast(msg: "Few more case added for you.");
+          Fluttertoast.showToast(msg: "Few more cases added for you.");
           nextEnable = true;
           if (endLimit == allSequence?.length) {
             finishedAllCase = true;
