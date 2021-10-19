@@ -271,426 +271,456 @@ class _CaseDetailsState extends State<CaseDetails> {
       body: Container(
         color: HexColor(color_theme),
         child: SafeArea(
-          left: false,
-          right: false,
-          bottom: false,
-          child: Container(
-            height: size.height,
-            decoration: BoxDecoration(
-                image: DecorationImage(
-                    image: AssetImage("assets/images/home_bg.png"),
-                    fit: BoxFit.cover),
-                color: HexColor(color_theme)),
-            child: Container(
-              child: Column(
-                children: <Widget>[
-                  Visibility(
-                      visible: _isProgressVisible,
-                      child: Column(children: <Widget>[
-                        SizedBox(height: 30),
-                        CircularProgressIndicator()
-                        //_isProgressVisible? LoaderTransparent() : Container();
-                      ])),
-                  Expanded(
-                    child: PhotoView.customChild(
-                      child: Container(
-                        child: SingleChildScrollView(
-                          physics: disabeScroll
-                              ? const NeverScrollableScrollPhysics()
-                              : const AlwaysScrollableScrollPhysics(),
+            left: false,
+            right: false,
+            bottom: false,
+            child: Stack(children: [
+              Container(
+                height: size.height,
+                decoration: BoxDecoration(
+                    image: DecorationImage(
+                        image: AssetImage("assets/images/home_bg.png"),
+                        fit: BoxFit.cover),
+                    color: HexColor(color_theme)),
+                child: Container(
+                  child: Column(
+                    children: <Widget>[
+                      // Visibility(
+                      //     visible: _isProgressVisible,
+                      //     child: Column(children: <Widget>[
+                      //       SizedBox(height: 30),
+                      //       CircularProgressIndicator()
+                      //       //_isProgressVisible? LoaderTransparent() : Container();
+                      //     ])),
+                      Expanded(
+                        child: PhotoView.customChild(
                           child: Container(
-                            padding: EdgeInsets.fromLTRB(15, 10, 15, 10),
-                            child: Column(
-                              children: [
-                                Container(
-                                  alignment: Alignment.centerLeft,
-                                  child: Text(
-                                    caseModel?.details,
-                                    textScaleFactor: 1,
-                                    style: TextStyle(
-                                        fontSize: 14,
-                                        color: HexColor(color_ffffff),
-                                        fontFamily: "Montserrat",
-                                        fontWeight: FontWeight.w400),
-                                  ),
-                                ),
-                                Container(
-                                  margin: EdgeInsets.only(top: 17),
-                                  color: HexColor(color_theme),
-                                  width: size.width,
-                                  height: size.width *
-                                      (caseModel.iHeight / caseModel.iWidth),
-                                  child: InkWell(
-                                    child: Container(
-                                      child: Visibility(
-                                          visible: _isShowProgress,
-                                          child: Center(
-                                              child: SizedBox(
-                                                  width: size.width,
-                                                  height: size.width *
-                                                      (caseModel.iHeight /
-                                                          caseModel.iWidth),
-                                                  child: Image.asset(
-                                                    'assets/placeholder.png',
-                                                    fit: BoxFit.fill,
-                                                  )))),
-                                      decoration: BoxDecoration(
-                                        color: Colors.white30,
-                                        image: DecorationImage(
-                                          // ignore: null_aware_in_condition
-                                          image: NetworkImage(caseModel
-                                                  ?.attachemtnImages?.isNotEmpty
-                                              ? caseModel?.attachemtnImages[0]
-                                                  ?.serverPath
-                                              : ''),
-                                          fit: BoxFit.fill,
-                                        ),
+                            child: SingleChildScrollView(
+                              physics: disabeScroll
+                                  ? const NeverScrollableScrollPhysics()
+                                  : const AlwaysScrollableScrollPhysics(),
+                              child: Container(
+                                padding: EdgeInsets.fromLTRB(15, 10, 15, 10),
+                                child: Column(
+                                  children: [
+                                    Container(
+                                      alignment: Alignment.centerLeft,
+                                      child: Text(
+                                        caseModel?.details,
+                                        textScaleFactor: 1,
+                                        style: TextStyle(
+                                            fontSize: 14,
+                                            color: HexColor(color_ffffff),
+                                            fontFamily: "Montserrat",
+                                            fontWeight: FontWeight.w400),
                                       ),
                                     ),
-                                    onTap: () async {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) => CaliperScreen(
-                                                caseModel?.attachemtnImages[0]
-                                                    ?.serverPath)),
-                                      );
-                                    },
-                                  ),
-                                  // childSize: Size(size.width, size.height * 0.6),
-                                ),
-                                if (!showAnswer)
-                                  Container(
-                                    margin: EdgeInsets.only(top: 20),
-                                    child: FlatButton(
-                                      shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(7.0),
-                                          side: BorderSide(
-                                              color: HexColor(color_ffffff))),
-                                      onPressed: () {
-                                        setState(() {
-                                          showAnswer = true;
-                                        });
-                                      },
-                                      child: Text('Show Answer',
-                                          textScaleFactor: 1,
-                                          style: TextStyle(
-                                              fontSize: 14,
-                                              color: HexColor(color_ffffff),
-                                              fontFamily: "Montserrat",
-                                              fontWeight: FontWeight.w500)),
-                                    ),
-                                  ),
-                                if (showAnswer)
-                                  Container(
-                                    alignment: Alignment.centerLeft,
-                                    child: Column(
-                                      mainAxisSize: MainAxisSize.min,
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.start,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Container(
-                                          margin: EdgeInsets.only(
-                                              bottom: 8, top: 20),
-                                          child: Text('Diagnosis:',
-                                              textScaleFactor: 1,
-                                              style: TextStyle(
-                                                  fontSize: 14,
-                                                  color: HexColor(color_ffea00),
-                                                  fontFamily: "Montserrat",
-                                                  fontWeight: FontWeight.w700)),
-                                        ),
-                                        Text(caseModel?.result,
-                                            textScaleFactor: 1,
-                                            style: TextStyle(
-                                                fontSize: 14,
-                                                color: HexColor(color_ffffff),
-                                                fontFamily: "Montserrat",
-                                                fontWeight: FontWeight.w400)),
-                                        Container(
-                                          margin: EdgeInsets.only(
-                                              top: 15, bottom: 8),
-                                          child: Text('Rationale:',
-                                              textScaleFactor: 1,
-                                              style: TextStyle(
-                                                  fontSize: 14,
-                                                  color: HexColor(color_ffea00),
-                                                  fontFamily: "Montserrat",
-                                                  fontWeight: FontWeight.w700)),
-                                        ),
-                                        Text(caseModel?.nextStep,
-                                            textScaleFactor: 1,
-                                            style: TextStyle(
-                                                fontSize: 14,
-                                                color: HexColor(color_ffffff),
-                                                fontFamily: "Montserrat",
-                                                fontWeight: FontWeight.w400)),
-                                        Visibility(
-                                          visible: isAnswerImageShow,
-                                          child: Container(
-                                            margin: EdgeInsets.only(
-                                                top: 15, bottom: 8),
-                                            child: InkWell(
-                                              onTap: () {
-                                                Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                      // ignore: null_aware_in_condition
-                                                      builder: (context) =>
-                                                          // ignore: null_aware_in_condition
-                                                          AnswerImageScreen(caseModel
-                                                                  ?.rationaleAttachments
-                                                                  ?.isNotEmpty
-                                                              ? caseModel
-                                                                  ?.answerImages[
-                                                                      0]
-                                                                  ?.serverPath
-                                                              : '')),
-                                                );
-                                              },
-                                              child: Image.asset(
-                                                  'assets/images/img_sol.png',
-                                                  width: 40.0,
-                                                  height: 40.0),
+                                    Container(
+                                      margin: EdgeInsets.only(top: 17),
+                                      color: HexColor(color_theme),
+                                      width: size.width,
+                                      height: size.width *
+                                          (caseModel.iHeight /
+                                              caseModel.iWidth),
+                                      child: InkWell(
+                                        child: Container(
+                                          child: Visibility(
+                                              visible: _isShowProgress,
+                                              child: Center(
+                                                  child: SizedBox(
+                                                      width: size.width,
+                                                      height: size.width *
+                                                          (caseModel.iHeight /
+                                                              caseModel.iWidth),
+                                                      child: Image.asset(
+                                                        'assets/placeholder.png',
+                                                        fit: BoxFit.fill,
+                                                      )))),
+                                          decoration: BoxDecoration(
+                                            color: Colors.white30,
+                                            image: DecorationImage(
+                                              // ignore: null_aware_in_condition
+                                              image: NetworkImage(caseModel
+                                                      ?.attachemtnImages
+                                                      ?.isNotEmpty
+                                                  ? caseModel
+                                                      ?.attachemtnImages[0]
+                                                      ?.serverPath
+                                                  : ''),
+                                              fit: BoxFit.fill,
                                             ),
                                           ),
                                         ),
-                                        Visibility(
-                                          visible: isReferenceShow,
-                                          child: Column(
-                                            mainAxisSize: MainAxisSize.min,
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.start,
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Container(
-                                                margin: EdgeInsets.only(
-                                                    top: 8, bottom: 8),
-                                                child: Text('References:',
-                                                    textScaleFactor: 1,
-                                                    style: TextStyle(
-                                                        fontSize: 12,
-                                                        color: HexColor(
-                                                            color_ffea00),
-                                                        fontFamily:
-                                                            "Montserrat",
-                                                        fontWeight:
-                                                            FontWeight.w700)),
-                                              ),
-                                              Html(
-                                                  style: {
-                                                    "body": Style(
-                                                      padding: EdgeInsets.only(
-                                                          top: 0, left: 0),
-                                                      margin: EdgeInsets.only(
-                                                          top: 0, left: 0),
-                                                      fontSize: FontSize(13.0),
+                                        onTap: () async {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    CaliperScreen(caseModel
+                                                        ?.attachemtnImages[0]
+                                                        ?.serverPath)),
+                                          );
+                                        },
+                                      ),
+                                      // childSize: Size(size.width, size.height * 0.6),
+                                    ),
+                                    if (!showAnswer)
+                                      Container(
+                                        margin: EdgeInsets.only(top: 20),
+                                        child: FlatButton(
+                                          shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(7.0),
+                                              side: BorderSide(
+                                                  color:
+                                                      HexColor(color_ffffff))),
+                                          onPressed: () {
+                                            setState(() {
+                                              showAnswer = true;
+                                            });
+                                          },
+                                          child: Text('Show Answer',
+                                              textScaleFactor: 1,
+                                              style: TextStyle(
+                                                  fontSize: 14,
+                                                  color: HexColor(color_ffffff),
+                                                  fontFamily: "Montserrat",
+                                                  fontWeight: FontWeight.w500)),
+                                        ),
+                                      ),
+                                    if (showAnswer)
+                                      Container(
+                                        alignment: Alignment.centerLeft,
+                                        child: Column(
+                                          mainAxisSize: MainAxisSize.min,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Container(
+                                              margin: EdgeInsets.only(
+                                                  bottom: 8, top: 20),
+                                              child: Text('Diagnosis:',
+                                                  textScaleFactor: 1,
+                                                  style: TextStyle(
+                                                      fontSize: 14,
+                                                      color: HexColor(
+                                                          color_ffea00),
                                                       fontFamily: "Montserrat",
                                                       fontWeight:
-                                                          FontWeight.w400,
-                                                    ),
+                                                          FontWeight.w700)),
+                                            ),
+                                            Text(caseModel?.result,
+                                                textScaleFactor: 1,
+                                                style: TextStyle(
+                                                    fontSize: 14,
+                                                    color:
+                                                        HexColor(color_ffffff),
+                                                    fontFamily: "Montserrat",
+                                                    fontWeight:
+                                                        FontWeight.w400)),
+                                            Container(
+                                              margin: EdgeInsets.only(
+                                                  top: 15, bottom: 8),
+                                              child: Text('Rationale:',
+                                                  textScaleFactor: 1,
+                                                  style: TextStyle(
+                                                      fontSize: 14,
+                                                      color: HexColor(
+                                                          color_ffea00),
+                                                      fontFamily: "Montserrat",
+                                                      fontWeight:
+                                                          FontWeight.w700)),
+                                            ),
+                                            Text(caseModel?.nextStep,
+                                                textScaleFactor: 1,
+                                                style: TextStyle(
+                                                    fontSize: 14,
+                                                    color:
+                                                        HexColor(color_ffffff),
+                                                    fontFamily: "Montserrat",
+                                                    fontWeight:
+                                                        FontWeight.w400)),
+                                            Visibility(
+                                              visible: isAnswerImageShow,
+                                              child: Container(
+                                                margin: EdgeInsets.only(
+                                                    top: 15, bottom: 8),
+                                                child: InkWell(
+                                                  onTap: () {
+                                                    Navigator.push(
+                                                      context,
+                                                      MaterialPageRoute(
+                                                          // ignore: null_aware_in_condition
+                                                          builder: (context) =>
+                                                              // ignore: null_aware_in_condition
+                                                              AnswerImageScreen(caseModel
+                                                                      ?.rationaleAttachments
+                                                                      ?.isNotEmpty
+                                                                  ? caseModel
+                                                                      ?.answerImages[
+                                                                          0]
+                                                                      ?.serverPath
+                                                                  : '')),
+                                                    );
                                                   },
-                                                  data: reference,
-                                                  onLinkTap: (String url) {
-                                                    openURL(url);
-                                                  }),
-                                            ],
-                                          ),
-                                        ),
-                                        Visibility(
-                                            visible: isSupplementShow,
-                                            child: Column(
-                                              mainAxisSize: MainAxisSize.min,
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.start,
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Container(
-                                                  margin: EdgeInsets.only(
-                                                      top: 0, bottom: 8),
-                                                  child: Text('Supplement:',
-                                                      textScaleFactor: 1,
-                                                      style: TextStyle(
-                                                          fontSize: 12,
-                                                          color: HexColor(
-                                                              color_ffea00),
+                                                  child: Image.asset(
+                                                      'assets/images/img_sol.png',
+                                                      width: 40.0,
+                                                      height: 40.0),
+                                                ),
+                                              ),
+                                            ),
+                                            Visibility(
+                                              visible: isReferenceShow,
+                                              child: Column(
+                                                mainAxisSize: MainAxisSize.min,
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.start,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Container(
+                                                    margin: EdgeInsets.only(
+                                                        top: 8, bottom: 8),
+                                                    child: Text('References:',
+                                                        textScaleFactor: 1,
+                                                        style: TextStyle(
+                                                            fontSize: 12,
+                                                            color: HexColor(
+                                                                color_ffea00),
+                                                            fontFamily:
+                                                                "Montserrat",
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .w700)),
+                                                  ),
+                                                  Html(
+                                                      style: {
+                                                        "body": Style(
+                                                          padding:
+                                                              EdgeInsets.only(
+                                                                  top: 0,
+                                                                  left: 0),
+                                                          margin:
+                                                              EdgeInsets.only(
+                                                                  top: 0,
+                                                                  left: 0),
+                                                          fontSize:
+                                                              FontSize(13.0),
                                                           fontFamily:
                                                               "Montserrat",
                                                           fontWeight:
-                                                              FontWeight.w700)),
-                                                ),
-                                                Html(
-                                                    style: {
-                                                      "body": Style(
-                                                        padding:
-                                                            EdgeInsets.only(
-                                                                top: 0,
-                                                                left: 0),
-                                                        margin: EdgeInsets.only(
-                                                            top: 0, left: 0),
-                                                        fontSize:
-                                                            FontSize(12.0),
-                                                        fontFamily:
-                                                            "Montserrat",
-                                                        fontWeight:
-                                                            FontWeight.w400,
-                                                      ),
-                                                    },
-                                                    data: supplement,
-                                                    onLinkTap: (String url) {
-                                                      openURL(url);
-                                                    }),
-                                              ],
-                                            )),
-                                      ],
-                                    ),
-                                  ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                      backgroundDecoration:
-                          BoxDecoration(color: HexColor(color_theme)),
-                      // customSize: MediaQuery.of(context).size,
-                      enableRotation: false,
-                      scaleStateChangedCallback: onScaleStateChangedCallback,
-                      minScale: PhotoViewComputedScale.contained,
-                      maxScale: PhotoViewComputedScale.covered * 2.5,
-                      initialScale: PhotoViewComputedScale.contained,
-                      // basePosition: Alignment.center,
-                    ),
-                  ),
-                  Container(
-                      height: (41 + bottomBarHeight),
-                      padding: EdgeInsets.only(bottom: bottomBarHeight),
-                      width: size.width,
-                      decoration: BoxDecoration(
-                        border: Border(
-                            top: BorderSide(
-                                width: 1.7, color: HexColor('#ff1d1e20'))),
-                        color: HexColor(color_0d0e0f),
-                      ),
-                      child: Stack(
-                        children: [
-                          Container(
-                            alignment: Alignment.centerLeft,
-                            margin: EdgeInsets.only(left: 16),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                GestureDetector(
-                                  child: SvgPicture.asset(
-                                    'assets/images/back_to_list.svg',
-                                    height: 16,
-                                  ),
-                                  onTap: () {
-                                    Navigator.pop(context);
-                                  },
-                                )
-                              ],
-                            ),
-                          ),
-                          Align(
-                            alignment: Alignment.center,
-                            child: Container(
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Text(
-                                    // '${pageCount * 10 + index + 1}',
-                                    selectedCount,
-                                    textScaleFactor: 1,
-                                    style: TextStyle(
-                                        fontSize: 14,
-                                        color: Colors.white,
-                                        fontFamily: "Montserrat",
-                                        fontWeight: FontWeight.w500),
-                                  ),
-                                  Text(
-                                    ' of $totalCount',
-                                    textScaleFactor: 1,
-                                    style: TextStyle(
-                                        fontSize: 14,
-                                        color: HexColor(color_444444),
-                                        fontFamily: "Montserrat",
-                                        fontWeight: FontWeight.w500),
-                                  ),
-                                ],
+                                                              FontWeight.w400,
+                                                        ),
+                                                      },
+                                                      data: reference,
+                                                      onLinkTap: (String url) {
+                                                        openURL(url);
+                                                      }),
+                                                ],
+                                              ),
+                                            ),
+                                            Visibility(
+                                                visible: isSupplementShow,
+                                                child: Column(
+                                                  mainAxisSize:
+                                                      MainAxisSize.min,
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.start,
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    Container(
+                                                      margin: EdgeInsets.only(
+                                                          top: 0, bottom: 8),
+                                                      child: Text('Supplement:',
+                                                          textScaleFactor: 1,
+                                                          style: TextStyle(
+                                                              fontSize: 12,
+                                                              color: HexColor(
+                                                                  color_ffea00),
+                                                              fontFamily:
+                                                                  "Montserrat",
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w700)),
+                                                    ),
+                                                    Html(
+                                                        style: {
+                                                          "body": Style(
+                                                            padding:
+                                                                EdgeInsets.only(
+                                                                    top: 0,
+                                                                    left: 0),
+                                                            margin:
+                                                                EdgeInsets.only(
+                                                                    top: 0,
+                                                                    left: 0),
+                                                            fontSize:
+                                                                FontSize(12.0),
+                                                            fontFamily:
+                                                                "Montserrat",
+                                                            fontWeight:
+                                                                FontWeight.w400,
+                                                          ),
+                                                        },
+                                                        data: supplement,
+                                                        onLinkTap:
+                                                            (String url) {
+                                                          openURL(url);
+                                                        }),
+                                                  ],
+                                                )),
+                                          ],
+                                        ),
+                                      ),
+                                  ],
+                                ),
                               ),
                             ),
                           ),
-                          Container(
-                            alignment: Alignment.centerRight,
-                            margin: EdgeInsets.only(right: 17),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                (previousEnable
-                                    ? GestureDetector(
-                                        child: SvgPicture.asset(
-                                          'assets/images/previous_enable.svg',
-                                          height: 24,
-                                        ),
-                                        onTap: () {
-                                          loadPreviousCase();
-                                        },
-                                      )
-                                    : GestureDetector(
-                                        child: SvgPicture.asset(
-                                          'assets/images/previous_disable.svg',
-                                          height: 24,
-                                        ),
-                                      )),
-                                SizedBox(width: 50),
-                                Visibility(
-                                  visible: !_isNextPageVisible,
-                                  child: (nextEnable
-                                      ? GestureDetector(
-                                          child: SvgPicture.asset(
-                                            'assets/images/next_enable.svg',
-                                            height: 24,
-                                          ),
-                                          onTap: () {
-                                            loadNextCase();
-                                          },
-                                        )
-                                      : GestureDetector(
-                                          child: SvgPicture.asset(
-                                            'assets/images/next_disable.svg',
-                                            height: 24,
-                                          ),
-                                        )),
-                                ),
-                                Visibility(
-                                  visible: _isNextPageVisible,
-                                  child: (true
-                                      ? GestureDetector(
-                                          child: SvgPicture.asset(
-                                            'assets/images/next_page.svg',
-                                            height: 24,
-                                          ),
-                                          onTap: () {
-                                            getCaseDataBySequence();
-                                          },
-                                        )
-                                      : ''),
-                                )
-                              ],
-                            ),
+                          backgroundDecoration:
+                              BoxDecoration(color: HexColor(color_theme)),
+                          // customSize: MediaQuery.of(context).size,
+                          enableRotation: false,
+                          scaleStateChangedCallback:
+                              onScaleStateChangedCallback,
+                          minScale: PhotoViewComputedScale.contained,
+                          maxScale: PhotoViewComputedScale.covered * 2.5,
+                          initialScale: PhotoViewComputedScale.contained,
+                          // basePosition: Alignment.center,
+                        ),
+                      ),
+                      Container(
+                          height: (41 + bottomBarHeight),
+                          padding: EdgeInsets.only(bottom: bottomBarHeight),
+                          width: size.width,
+                          decoration: BoxDecoration(
+                            border: Border(
+                                top: BorderSide(
+                                    width: 1.7, color: HexColor('#ff1d1e20'))),
+                            color: HexColor(color_0d0e0f),
                           ),
-                        ],
-                      ))
-                ],
+                          child: Stack(
+                            children: [
+                              Container(
+                                alignment: Alignment.centerLeft,
+                                margin: EdgeInsets.only(left: 16),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    GestureDetector(
+                                      child: SvgPicture.asset(
+                                        'assets/images/back_to_list.svg',
+                                        height: 16,
+                                      ),
+                                      onTap: () {
+                                        Navigator.pop(context);
+                                      },
+                                    )
+                                  ],
+                                ),
+                              ),
+                              Align(
+                                alignment: Alignment.center,
+                                child: Container(
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Text(
+                                        // '${pageCount * 10 + index + 1}',
+                                        selectedCount,
+                                        textScaleFactor: 1,
+                                        style: TextStyle(
+                                            fontSize: 14,
+                                            color: Colors.white,
+                                            fontFamily: "Montserrat",
+                                            fontWeight: FontWeight.w500),
+                                      ),
+                                      Text(
+                                        ' of $totalCount',
+                                        textScaleFactor: 1,
+                                        style: TextStyle(
+                                            fontSize: 14,
+                                            color: HexColor(color_444444),
+                                            fontFamily: "Montserrat",
+                                            fontWeight: FontWeight.w500),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              Container(
+                                alignment: Alignment.centerRight,
+                                margin: EdgeInsets.only(right: 17),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    (previousEnable
+                                        ? GestureDetector(
+                                            child: SvgPicture.asset(
+                                              'assets/images/previous_enable.svg',
+                                              height: 24,
+                                            ),
+                                            onTap: () {
+                                              loadPreviousCase();
+                                            },
+                                          )
+                                        : GestureDetector(
+                                            child: SvgPicture.asset(
+                                              'assets/images/previous_disable.svg',
+                                              height: 24,
+                                            ),
+                                          )),
+                                    SizedBox(width: 50),
+                                    Visibility(
+                                      visible: !_isNextPageVisible,
+                                      child: (nextEnable
+                                          ? GestureDetector(
+                                              child: SvgPicture.asset(
+                                                'assets/images/next_enable.svg',
+                                                height: 24,
+                                              ),
+                                              onTap: () {
+                                                loadNextCase();
+                                              },
+                                            )
+                                          : GestureDetector(
+                                              child: SvgPicture.asset(
+                                                'assets/images/next_disable.svg',
+                                                height: 24,
+                                              ),
+                                            )),
+                                    ),
+                                    Visibility(
+                                      visible: _isNextPageVisible,
+                                      child: (true
+                                          ? GestureDetector(
+                                              child: SvgPicture.asset(
+                                                'assets/images/next_page.svg',
+                                                height: 24,
+                                              ),
+                                              onTap: () {
+                                                getCaseDataBySequence();
+                                              },
+                                            )
+                                          : ''),
+                                    )
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ))
+                    ],
+                  ),
+                ),
               ),
-            ),
-          ),
-        ),
+              _isProgressVisible
+                  ? LoaderTransparent(MediaQuery.of(context).size.width)
+                  : Container()
+            ])),
       ),
     );
   }
@@ -731,7 +761,7 @@ class _CaseDetailsState extends State<CaseDetails> {
           }
         }
         setState(() {
-          Fluttertoast.showToast(msg: "More case added for you.");
+          Fluttertoast.showToast(msg: "Few more case added for you.");
           nextEnable = true;
           if (endLimit == allSequence?.length) {
             finishedAllCase = true;

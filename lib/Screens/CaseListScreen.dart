@@ -377,7 +377,7 @@ class _CaseListScreenState extends State<CaseListScreen> {
                   ],
                 ),
               ),
-              _isProgressVisible ? LoaderTransparent() : Container()
+              _isProgressVisible ? LoaderTransparent(MediaQuery.of(context).size.height) : Container()
             ]),
           ),
         ));
