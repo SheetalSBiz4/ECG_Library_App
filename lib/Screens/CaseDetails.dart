@@ -230,7 +230,11 @@ class _CaseDetailsState extends State<CaseDetails> {
           _isNextPageVisible = false;
           nextEnable = false;
         } else {
-          _isNextPageVisible = true;
+          if (currentPage == totalPageCount) {
+            _isNextPageVisible = false;
+          } else {
+            _isNextPageVisible = true;
+          }
         }
       });
     } else {
