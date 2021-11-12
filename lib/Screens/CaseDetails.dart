@@ -205,6 +205,11 @@ class _CaseDetailsState extends State<CaseDetails> {
       isReferenceShow = false;
     }
 
+    reference = reference.replaceAll("</p>", "</br>");
+    supplement = supplement.replaceAll("</p>", "</br>");
+    // print('reference--->$reference');
+
+
     if (caseModel.rationaleAttachments.isEmpty ||
         caseModel.rationaleAttachments[0].isEmpty) {
       isAnswerImageShow = false;
