@@ -211,7 +211,7 @@ class _CaseDetailsState extends State<CaseDetails> {
 
 
     if (caseModel.rationaleAttachments.isEmpty ||
-        caseModel.rationaleAttachments[0].isEmpty) {
+        (caseModel.rationaleAttachments[0]?.isEmpty  ?? true)) {
       isAnswerImageShow = false;
     }
 
