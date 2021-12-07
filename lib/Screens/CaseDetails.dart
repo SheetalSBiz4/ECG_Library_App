@@ -188,32 +188,74 @@ class _CaseDetailsState extends State<CaseDetails> {
     bool isAnswerImageShow = true;
     bool isReferenceShow = true;
 
-    String reference = caseModel?.references?.replaceAll("<p>", "");
-    String supplement = caseModel?.supplement?.replaceAll("<p>", "");
-    reference.replaceAll("</p>", "");
-    supplement.replaceAll("</p>", "");
+    String reference = caseModel?.references;
+    String supplement = caseModel?.supplement;
 
-    if (supplement.isEmpty ||
-        !supplement.startsWith('<a href="http') ||
-        !supplement.startsWith('<a href="https')) {
+    print('reference before processing--->$reference');
+    print('supplement before processing--->$supplement');
+
+    reference = reference?.replaceAll("<p>", "");
+    supplement = supplement?.replaceAll("<p>", "");
+
+    if (supplement.isEmpty) {
+      isSupplementShow = false;
+    } else if (supplement.startsWith('<a href="http')){
+
+    } else if(supplement.startsWith('<a href="https')){
+
+    } else if(supplement.startsWith('<a title="')){
+      if(supplement.contains('href="http')){
+
+      }else{
+        isSupplementShow = false;
+      }
+    } else {
       isSupplementShow = false;
     }
+    if (reference.isEmpty) {
+      isReferenceShow = false;
+    } else if (reference.startsWith('<a href="http')){
 
-    if (reference.isEmpty ||
-        !reference.startsWith('<a href="http') ||
-        !reference.startsWith('<a href="https')) {
+    } else if(reference.startsWith('<a href="https')){
+
+    } else if(reference.startsWith('<a title="')){
+      if(reference.contains('href="http')){
+
+      } else{
+        isReferenceShow = false;
+      }
+    } else {
       isReferenceShow = false;
     }
 
-    reference = reference.replaceAll("</p>", "</br>");
-    supplement = supplement.replaceAll("</p>", "</br>");
-    // print('reference--->$reference');
+    reference = reference.replaceAll("</p>", "");
+    supplement = supplement.replaceAll("</p>", "");
+
+    reference = reference.replaceAll("</a>", "</a></br>");
+    supplement = supplement.replaceAll("</a>", "</a></br>");
+
+    if(reference.endsWith('</a></br>')){
+      int index = reference.lastIndexOf('</a></br>');
+      reference = reference.replaceRange(index, index+9, '</a>');
+    }
+
+    if(supplement.endsWith('</a></br>')){
+      int index = supplement.lastIndexOf('</a></br>');
+      supplement = supplement.replaceRange(index, index+9, '</a>');
+    }
+
+    print('reference after processing--->$reference');
+    print('supplement after processing--->$supplement');
 
 
     if (caseModel.rationaleAttachments.isEmpty ||
         (caseModel.rationaleAttachments[0]?.isEmpty  ?? true)) {
       isAnswerImageShow = false;
     }
+
+    print('isReferenceShow--->$isReferenceShow');
+    print('isSupplementShow--->$isSupplementShow');
+    print('isAnswerImageShow--->$isAnswerImageShow');
 
     var selectedCount;
     if (pageCount > 1) {
@@ -508,6 +550,7 @@ class _CaseDetailsState extends State<CaseDetails> {
                                                   Html(
                                                       style: {
                                                         "body": Style(
+                                                          //backgroundColor: const Color(0xFF332F43),
                                                           padding:
                                                               EdgeInsets.only(
                                                                   top: 0,
@@ -543,7 +586,7 @@ class _CaseDetailsState extends State<CaseDetails> {
                                                   children: [
                                                     Container(
                                                       margin: EdgeInsets.only(
-                                                          top: 0, bottom: 8),
+                                                          top: 10, bottom: 8),
                                                       child: Text('Supplement:',
                                                           textScaleFactor: 1,
                                                           style: TextStyle(
@@ -559,6 +602,7 @@ class _CaseDetailsState extends State<CaseDetails> {
                                                     Html(
                                                         style: {
                                                           "body": Style(
+                                                            //backgroundColor: const Color(0xFF332F43),
                                                             padding:
                                                                 EdgeInsets.only(
                                                                     top: 0,
