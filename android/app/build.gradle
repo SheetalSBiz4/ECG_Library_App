@@ -52,16 +52,16 @@ android {
 
     signingConfigs {
         release {
-            keyAlias 'yingcyang'
-            keyPassword 'Iowa2021'
-            storeFile file('../yingcyang.jks')
-            storePassword 'Iowa2021'
+            keyAlias 'yingchiyang'
+            keyPassword 'Iowa2022'
+            storeFile file('../yingchiyang.jks')
+            storePassword 'Iowa2022'
         }
         debug {
-            keyAlias 'yingcyang'
-            keyPassword 'Iowa2021'
-            storeFile file('../yingcyang.jks')
-            storePassword 'Iowa2021'
+            keyAlias 'yingchiyang'
+            keyPassword 'Iowa2022'
+            storeFile file('../yingchiyang.jks')
+            storePassword 'Iowa2022'
         }
     }
 
