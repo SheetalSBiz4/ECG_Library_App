@@ -22,6 +22,30 @@
           }
         },
         {
+          "client_id": "913576419098-5plj44lsi4f5enc81la5k5adstb4jre1.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.ecglibrary",
+            "certificate_hash": "b9ea4fad8e9b87c8c378ec63ff8608d876649bb9"
+          }
+        },
+        {
+          "client_id": "913576419098-c9dtvs58cs40866u14te2vaqo4dgvfve.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.ecglibrary",
+            "certificate_hash": "9466600e6ef7c5d28ff144ec8b1602d383474d8f"
+          }
+        },
+        {
+          "client_id": "913576419098-dtnbj9g2is0lmuv6semn13k1cbr3de8r.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.ecglibrary",
+            "certificate_hash": "85a4c4491935c352e0bf3de8b1ab456ee302061e"
+          }
+        },
+        {
           "client_id": "913576419098-r7idim0je3bgkdordnp105d4l2ukqrn5.apps.googleusercontent.com",
           "client_type": 3
         }
@@ -37,6 +61,13 @@
             {
               "client_id": "913576419098-r7idim0je3bgkdordnp105d4l2ukqrn5.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "913576419098-j8eirjbcmsjtvkionutsakdjp7198ddd.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.ecglibrary"
+              }
             }
           ]
         }

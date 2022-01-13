@@ -25,7 +25,7 @@ apply plugin: 'kotlin-android'
 apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
 
 android {
-    compileSdkVersion 29
+    compileSdkVersion 30
 
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'
@@ -44,24 +44,24 @@ android {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
         applicationId "com.ecglibrary"
         minSdkVersion 23
-        targetSdkVersion 29
-        versionCode 4
-        versionName "1.0.0"
+        targetSdkVersion 30
+        versionCode 1
+        versionName "1.0.4"
         multiDexEnabled true
     }
 
     signingConfigs {
         release {
-            keyAlias 'yingcyang'
-            keyPassword 'Iowa2021'
-            storeFile file('../yingcyang.jks')
-            storePassword 'Iowa2021'
+            keyAlias 'yingchiyang'
+            keyPassword 'Iowa2022'
+            storeFile file('../yingchiyang.jks')
+            storePassword 'Iowa2022'
         }
         debug {
-            keyAlias 'yingcyang'
-            keyPassword 'Iowa2021'
-            storeFile file('../yingcyang.jks')
-            storePassword 'Iowa2021'
+            keyAlias 'yingchiyang'
+            keyPassword 'Iowa2022'
+            storeFile file('../yingchiyang.jks')
+            storePassword 'Iowa2022'
         }
     }
 
@@ -84,7 +84,7 @@ flutter {
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation 'androidx.multidex:multidex:2.0.0'
-    implementation 'com.facebook.android:facebook-android-sdk:[5,6)'
+//    implementation 'com.facebook.android:facebook-android-sdk:[5,6)'
     implementation 'androidx.multidex:multidex:2.0.0'
 }
 apply plugin: 'com.google.firebase.crashlytics'
