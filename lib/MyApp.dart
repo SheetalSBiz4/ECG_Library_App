@@ -1,5 +1,4 @@
 import 'package:ecg/constants.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -30,7 +29,7 @@ class MyApp extends StatelessWidget {
   }
 
   void init(Map<String, String> env) {
-    print('ENV-------->>>>>${env}');
+    // print('ENV-------->>>>>${env}');
     ENV = env["ENV"];
   }
 }

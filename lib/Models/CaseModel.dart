@@ -12,8 +12,13 @@ class CaseModel {
   double _width = 1;
   double _height = 1;
   List<String> _attachments;
+  List<String> _rationaleAttachments;
   List<CaseImageModel> _attachemtnImages = [];
+  List<CaseImageModel> _answerImages = [];
   bool _isRead = false;
+  bool _isPublish = false;
+  String _supplement;
+  String _skillLevel;
 
   String get id => _id;
 
@@ -91,5 +96,35 @@ class CaseModel {
 
   set iHeight(double value) {
     _height = value;
+  }
+
+  bool get isPublish => _isPublish;
+
+  set isPublish(bool value) {
+    _isPublish = value;
+  }
+
+  String get skillLevel => _skillLevel;
+
+  set skillLevel(String value) {
+    _skillLevel = value;
+  }
+
+  String get supplement => _supplement;
+
+  set supplement(String value) {
+    _supplement = value;
+  }
+
+  List<String> get rationaleAttachments => _rationaleAttachments;
+
+  set rationaleAttachments(List<String> value) {
+    _rationaleAttachments = value;
+  }
+
+  List<CaseImageModel> get answerImages => _answerImages;
+
+  set answerImages(List<CaseImageModel> value) {
+    _answerImages = value;
   }
 }
